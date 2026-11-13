@@ -1,0 +1,187 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create `index.html` with the Game_Page structure": [
+      {
+        "executionId": "0db61493-6b87-4458-b9f1-93a9c65f29ff",
+        "chatSessionId": "sess_e88be31f-e4c6-42d7-8309-7ad2f544e555",
+        "timestamp": 1794142253624
+      },
+      {
+        "executionId": "0db61493-6b87-4458-b9f1-93a9c65f29ff",
+        "chatSessionId": "sess_e88be31f-e4c6-42d7-8309-7ad2f544e555",
+        "timestamp": 1794142379205
+      }
+    ],
+    "1. Build the HTML page (index.html)": [
+      {
+        "executionId": "0db61493-6b87-4458-b9f1-93a9c65f29ff",
+        "chatSessionId": "sess_e88be31f-e4c6-42d7-8309-7ad2f544e555",
+        "timestamp": 1794142379319
+      }
+    ],
+    "2.1 Create `style.css` for the haunted dark look": [
+      {
+        "executionId": "7a85bd33-a314-4803-ac05-6fa38713c743",
+        "chatSessionId": "sess_03b0fbb8-b53e-424a-b6ec-30c4726bb77b",
+        "timestamp": 1794142637517
+      },
+      {
+        "executionId": "7a85bd33-a314-4803-ac05-6fa38713c743",
+        "chatSessionId": "sess_03b0fbb8-b53e-424a-b6ec-30c4726bb77b",
+        "timestamp": 1794142711358
+      }
+    ],
+    "2. Build the dark presentation (style.css)": [
+      {
+        "executionId": "7a85bd33-a314-4803-ac05-6fa38713c743",
+        "chatSessionId": "sess_03b0fbb8-b53e-424a-b6ec-30c4726bb77b",
+        "timestamp": 1794142711430
+      }
+    ],
+    "3.1 Add the game state": [
+      {
+        "executionId": "6f870449-3155-468c-be61-6af5b47de903",
+        "chatSessionId": "sess_8fb1d717-7482-4c69-b085-cab6062d3d6c",
+        "timestamp": 1794142907242
+      },
+      {
+        "executionId": "6f870449-3155-468c-be61-6af5b47de903",
+        "chatSessionId": "sess_8fb1d717-7482-4c69-b085-cab6062d3d6c",
+        "timestamp": 1794143011953
+      }
+    ],
+    "3.2 Add `normalizeCommand(rawInput)`": [
+      {
+        "executionId": "d4e80e38-bae7-4c4f-84c8-d21362b4eaba",
+        "chatSessionId": "sess_cba852d3-7331-481b-8489-79efb8c61ca1",
+        "timestamp": 1794143280320
+      },
+      {
+        "executionId": "270f1827-1620-4729-b050-2113091862a3",
+        "chatSessionId": "sess_cba852d3-7331-481b-8489-79efb8c61ca1",
+        "timestamp": 1794143699735
+      },
+      {
+        "executionId": "270f1827-1620-4729-b050-2113091862a3",
+        "chatSessionId": "sess_cba852d3-7331-481b-8489-79efb8c61ca1",
+        "timestamp": 1794143742060
+      }
+    ],
+    "3.3 Add `renderOutput(lines)`": [
+      {
+        "executionId": "541afea2-0522-4847-827d-f77dcaa417ad",
+        "chatSessionId": "sess_e58a4977-b589-411d-aa9e-69953102a3a5",
+        "timestamp": 1794143978897
+      },
+      {
+        "executionId": "541afea2-0522-4847-827d-f77dcaa417ad",
+        "chatSessionId": "sess_e58a4977-b589-411d-aa9e-69953102a3a5",
+        "timestamp": 1794144040700
+      }
+    ],
+    "3.4 Add the first `processCommand(state, rawInput)` and `handleUnknown`": [
+      {
+        "executionId": "4d8ff10f-c4a6-4b07-a1a1-98f3e4668fb7",
+        "chatSessionId": "sess_b7d5762c-cf4c-44b7-a025-638fbe1e443e",
+        "timestamp": 1794144297370
+      },
+      {
+        "executionId": "4d8ff10f-c4a6-4b07-a1a1-98f3e4668fb7",
+        "chatSessionId": "sess_b7d5762c-cf4c-44b7-a025-638fbe1e443e",
+        "timestamp": 1794144370852
+      }
+    ],
+    "3.5 Add `handleSubmit(event)`": [
+      {
+        "executionId": "ea63eb0e-3f03-4588-a3ec-6942b4f0f757",
+        "chatSessionId": "sess_7ae03d6a-5815-47b6-bb41-c30dd973cb7f",
+        "timestamp": 1794144620343
+      },
+      {
+        "executionId": "ea63eb0e-3f03-4588-a3ec-6942b4f0f757",
+        "chatSessionId": "sess_7ae03d6a-5815-47b6-bb41-c30dd973cb7f",
+        "timestamp": 1794144661379
+      }
+    ],
+    "3.6 Add `init()` and run it on `DOMContentLoaded`": [
+      {
+        "executionId": "8b6b2895-290d-45e3-bc7b-cbe517e7055e",
+        "chatSessionId": "sess_db0ce0e7-d4c4-4a1e-9f2f-12b45703bd52",
+        "timestamp": 1794144694271
+      },
+      {
+        "executionId": "8b6b2895-290d-45e3-bc7b-cbe517e7055e",
+        "chatSessionId": "sess_db0ce0e7-d4c4-4a1e-9f2f-12b45703bd52",
+        "timestamp": 1794144792655
+      }
+    ],
+    "3.7 Add `handleLook` and wire `\"look\"`": [
+      {
+        "executionId": "20dd0302-7382-448d-9402-ba33405ef5c3",
+        "chatSessionId": "sess_07f6703e-442e-46e6-97d9-f073508b5ec0",
+        "timestamp": 1794145112671
+      },
+      {
+        "executionId": "20dd0302-7382-448d-9402-ba33405ef5c3",
+        "chatSessionId": "sess_07f6703e-442e-46e6-97d9-f073508b5ec0",
+        "timestamp": 1794145162158
+      }
+    ],
+    "3.8 Add `handleGoNorth` and wire `\"go north\"`": [
+      {
+        "executionId": "63c3c80a-2f09-4da0-8244-9598881eeae6",
+        "chatSessionId": "sess_a19486cf-0cbb-4145-adc9-d763f7a1fd9d",
+        "timestamp": 1794145371839
+      },
+      {
+        "executionId": "63c3c80a-2f09-4da0-8244-9598881eeae6",
+        "chatSessionId": "sess_a19486cf-0cbb-4145-adc9-d763f7a1fd9d",
+        "timestamp": 1794145415453
+      }
+    ],
+    "3.9 Add `handleInventory` and wire `\"inventory\"`": [
+      {
+        "executionId": "7b3ac57f-d9b1-4d1d-959d-cd788da2f3be",
+        "chatSessionId": "sess_2aac1aa4-c815-4765-b341-869b3cf4ea59",
+        "timestamp": 1794145674417
+      },
+      {
+        "executionId": "7b3ac57f-d9b1-4d1d-959d-cd788da2f3be",
+        "chatSessionId": "sess_2aac1aa4-c815-4765-b341-869b3cf4ea59",
+        "timestamp": 1794145836710
+      }
+    ],
+    "3.10 Add `handleTakeLamp` and wire `\"take lamp\"`": [
+      {
+        "executionId": "231558a5-3ab0-4e39-a73b-87b276026452",
+        "chatSessionId": "sess_ad5980ae-ad95-4f20-a8a9-1c9bae90383d",
+        "timestamp": 1794145957419
+      },
+      {
+        "executionId": "231558a5-3ab0-4e39-a73b-87b276026452",
+        "chatSessionId": "sess_ad5980ae-ad95-4f20-a8a9-1c9bae90383d",
+        "timestamp": 1794146013334
+      }
+    ],
+    "3. Build the Game_Engine (game.js) — one small piece at a time": [
+      {
+        "executionId": "231558a5-3ab0-4e39-a73b-87b276026452",
+        "chatSessionId": "sess_ad5980ae-ad95-4f20-a8a9-1c9bae90383d",
+        "timestamp": 1794146013473
+      }
+    ],
+    "4. Checkpoint - manually verify the whole game in the browser": [
+      {
+        "executionId": "96680749-c7fe-43af-b832-89bab83bf69d",
+        "chatSessionId": "sess_cfb7ef50-53ea-49c1-a3bc-bfe2bedf3ac3",
+        "timestamp": 1794146474977
+      },
+      {
+        "executionId": "96680749-c7fe-43af-b832-89bab83bf69d",
+        "chatSessionId": "sess_cfb7ef50-53ea-49c1-a3bc-bfe2bedf3ac3",
+        "timestamp": 1794147338320
+      }
+    ]
+  }
+}

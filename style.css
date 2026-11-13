@@ -1,0 +1,73 @@
+/* Haunted Adventure: dark, haunted presentation */
+
+/* Cover the full viewport with a dark background and light text. */
+html,
+body {
+  height: 100vh;          /* fill at least the whole screen */
+  margin: 0;                 /* remove default page margins */
+  background-color: #0a0a0a; /* near-black, haunted background */
+  color: #33ff66;            /* light gray text, readable on dark */
+}
+
+/* Lay the page out as a column: output grows, input stays at the bottom. */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Output_Display: monospace, left-aligned, grows with content and scrolls. */
+#output {
+  flex: 1;                    /* take all space left after the input */
+  overflow-y: auto;           /* scroll only when text overflows */
+  font-family: monospace;     /* classic terminal look, no external fonts */
+  font-size: 18px;
+  text-align: left;           /* lines read from the left edge */
+  padding: 16px;             /* a little breathing room from the edges */
+  padding-bottom: 45vh;
+}
+
+/* The prompt line: ">>" followed by the typing area, side by side. */
+#command-form {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+#prompt {
+  margin-right: 10px;
+}
+
+/* The real input is kept but made invisible. It still receives the typing. */
+#command-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  border: none;
+  padding: 0;
+}
+
+/* Show the typed text, keeping its spaces. */
+#typed {
+  white-space: pre;
+}
+
+/* The blinking underscore. */
+#cursor {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Status bar: a green strip across the top, like a classic terminal header. */
+#status-bar {
+  background-color: #33ff66;
+  color: #0a0a0a;
+  font-family: monospace;
+  font-size: 18px;
+  padding: 6px 16px;
+}
