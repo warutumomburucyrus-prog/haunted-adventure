@@ -7,6 +7,7 @@ body {
   margin: 0;                 /* remove default page margins */
   background-color: #0a0a0a; /* near-black, haunted background */
   color: #33ff66;            /* light gray text, readable on dark */
+  overflow: hidden;
 }
 
 /* Lay the page out as a column: output grows, input stays at the bottom. */
@@ -24,6 +25,7 @@ body {
   text-align: left;           /* lines read from the left edge */
   padding: 16px;             /* a little breathing room from the edges */
   padding-bottom: 45vh;
+  position: relative;
 }
 
 /* The prompt line: ">>" followed by the typing area, side by side. */
@@ -70,4 +72,6 @@ body {
   font-family: monospace;
   font-size: 18px;
   padding: 6px 16px;
+  display: flex;
+  justify-content: space-between;
 }

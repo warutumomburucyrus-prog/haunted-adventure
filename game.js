@@ -1,11 +1,54 @@
 // Haunted Adventure game engine.
 // This file holds the game state and the command logic.
 
+// ---- Fear constants ----
+// These numbers and texts control the fear meter. Only game code uses them.
+
+// The fear level the player starts with.
+const FEAR_START = 0;
+
+// The highest fear can go. Reaching it ends the game.
+const FEAR_MAX = 100;
+
+// Fear added by an ordinary command (like moving to a new room).
+const FEAR_COST_NORMAL = 1;
+
+// Fear added by a command while the player is in the cellar.
+const FEAR_COST_CELLAR = 3;
+
+// Extra fear added once, when the player first enters the cellar.
+const FEAR_CELLAR_ENTRY = 10;
+
+// Fear levels that trigger a warning message, from lowest to highest.
+const FEAR_THRESHOLDS = [25, 50, 75];
+
+// The warning shown at each threshold. Same order as FEAR_THRESHOLDS.
+const THRESHOLD_LINES = [
+  "The air grows colder, and the house seems to lean closer.",
+  "Somewhere above you, slow footsteps stop moving.",
+  "You are sure now that something is standing right behind you."
+];
+
+// The lines shown when fear reaches FEAR_MAX and the game ends.
+const GAME_OVER_LINES = [
+  "The Caretaker has found you. The lamp light shrinks, and the dark closes over you without a sound.",
+  "Type restart to try again."
+];
+
+// The short reminder shown if the player types anything after the game is over.
+const GAME_OVER_REMINDER = "The Caretaker has you. Type restart to try again.";
+
 // INITIAL_STATE is the starting game state: the player begins in the Hallway,
 // carrying nothing, with a lamp sitting in the room.
 const INITIAL_STATE = {
   currentRoomId: "hallway",
   carriedItems: [],
+  // How scared the player is, from 0 to FEAR_MAX. Only game code changes it.
+  fear: FEAR_START,
+  // Thresholds whose warning lines were already shown, so each shows only once.
+  shownThresholds: [],
+  // True once fear reaches FEAR_MAX and the game has ended.
+  gameOver: false,
   rooms: {
     hallway: {
       name: "Hallway",
@@ -116,7 +159,9 @@ function renderOutput(lines) {
     lineDiv.textContent = line;
     output.insertBefore(lineDiv, document.getElementById("command-form"));
   }
-  document.getElementById("command-form").scrollIntoView({ block: "center" });
+  // Scroll the output box (not the whole page) so the prompt sits mid-screen.
+  const form = document.getElementById("command-form");
+  output.scrollTop = form.offsetTop - output.clientHeight / 2;
 }
 
 // handleUnknown is used when the player types something that is not a
@@ -124,7 +169,8 @@ function renderOutput(lines) {
 // exact same state, so nothing in the game changes.
 // (Requirements 8.1, 8.2, 9.4)
 function handleUnknown(state) {
-  return { state, lines: ["That command is not recognized."] };
+  // unknown: true tells the fear code that this command costs no fear.
+  return { state, lines: ["That command is not recognized."], unknown: true };
 }
 
 // handleLook shows the current room's description and lists any items
@@ -296,12 +342,13 @@ function handleTakeLamp(state) {
   return { state, lines: ["There is no lamp here."] };
 }
 
-// processCommand is the core of the game. It takes the current state and
+// runCommand is the core of the game. It takes the current state and
 // the raw text the player typed, then returns { state, lines }:
 //   - state is the game state after the command (same reference if unchanged)
 //   - lines is a list of text lines to show on the screen
 // This is a pure function: it never reads or changes the page (DOM).
-function processCommand(state, rawInput) {
+// The new processCommand (added in task 5.3) wraps this function.
+function runCommand(state, rawInput) {
   const command = normalizeCommand(rawInput);
 
   // examine <thing>: look closely at something. Several words work.
@@ -354,6 +401,113 @@ function processCommand(state, rawInput) {
   return handleUnknown(state);
 }
 
+// applyFear works out the new fear after a command. It compares the state
+// before the command (oldState) with the state after it (newState) and
+// returns a new state with the updated fear. It never changes either state.
+function applyFear(oldState, newState) {
+  // The cost depends on the room the player was in before the command.
+  const cost = oldState.currentRoomId === "cellar" ? FEAR_COST_CELLAR : FEAR_COST_NORMAL;
+
+  // Going down into the cellar adds a one-time scare. A refused move keeps
+  // the same room, so it never gets this bonus.
+  const enteredCellar = oldState.currentRoomId !== "cellar" && newState.currentRoomId === "cellar";
+  const entryBonus = enteredCellar ? FEAR_CELLAR_ENTRY : 0;
+
+  // Fear can never go above FEAR_MAX.
+  const fear = Math.min(FEAR_MAX, oldState.fear + cost + entryBonus);
+
+  return { ...newState, fear };
+}
+
+// getThresholdLines finds the fear warnings that should show after a command.
+// oldFear is the fear before the command. newState already has the new fear.
+// It returns { shownThresholds, lines }: the warning lines (lowest first) and
+// the updated list of thresholds already shown. It never changes newState.
+function getThresholdLines(oldFear, newState) {
+  // Start from a copy, so the state's own list is never changed.
+  const shownThresholds = [...newState.shownThresholds];
+  const lines = [];
+
+  for (let i = 0; i < FEAR_THRESHOLDS.length; i++) {
+    const threshold = FEAR_THRESHOLDS[i];
+    // Count it only if fear just crossed it and it was not shown before.
+    const crossed = oldFear < threshold && newState.fear >= threshold;
+    if (crossed && !shownThresholds.includes(threshold)) {
+      shownThresholds.push(threshold);
+      lines.push(THRESHOLD_LINES[i]);
+    }
+  }
+
+  return { shownThresholds, lines };
+}
+
+// getStatusText builds the text for the status bar, like "Cellar | Fear: 12".
+// It only reads the state and returns a string. It never touches the page.
+function getStatusText(state) {
+  const roomName = state.rooms[state.currentRoomId].name;
+  return roomName + " | Fear: " + state.fear;
+}
+
+// processCommand is the function the page calls. It wraps runCommand and adds
+// the fear rules: restart, game over, fear cost, warnings and the ending.
+// It returns { state, lines }. It never reads or changes the page.
+function processCommand(state, rawInput) {
+  const command = normalizeCommand(rawInput);
+
+  // Step 1: restart works in any state, costs no fear, and starts fresh.
+  if (command === "restart") {
+    return {
+      state: INITIAL_STATE,
+      lines: [...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines]
+    };
+  }
+
+  // Step 2: empty input does nothing, even after game over.
+  if (command === "") {
+    return { state, lines: [] };
+  }
+
+  // Step 3: after game over, only restart works. Show a short reminder.
+  if (state.gameOver) {
+    return { state, lines: [GAME_OVER_REMINDER] };
+  }
+
+  // Step 4: run the normal command logic.
+  const result = runCommand(state, rawInput);
+
+  // Step 5: unknown text and help cost no fear, so return them as they are.
+  if (result.unknown || command === "help") {
+    return result;
+  }
+
+  // Step 6: add the fear cost (refused commands cost fear too).
+  const feared = applyFear(state, result.state);
+
+  // Step 7: find warning lines for any thresholds just crossed.
+  const thresholds = getThresholdLines(state.fear, feared);
+
+  // Step 8: build the final state and lines. Order: reply, warnings, ending.
+  let finalState = { ...feared, shownThresholds: thresholds.shownThresholds };
+  const lines = [...result.lines, ...thresholds.lines];
+
+  // Step 9: at maximum fear the Caretaker catches the player.
+  if (finalState.fear === FEAR_MAX) {
+    finalState = { ...finalState, gameOver: true };
+    lines.push(...GAME_OVER_LINES);
+  }
+
+  return { state: finalState, lines };
+}
+
+// updateStatusBar shows the room name and fear in the #status-bar element.
+// If the page has no #status-bar, it does nothing.
+function updateStatusBar(state) {
+  const bar = document.getElementById("status-info");
+  if (bar) {
+    bar.textContent = getStatusText(state);
+  }
+}
+
 // handleSubmit runs when the player submits the command form. It stops
 // the page from reloading, reads the typed text, runs it through
 // processCommand, saves the new state, shows the reply, then clears and
@@ -371,6 +525,7 @@ function handleSubmit(event) {
   }
   const result = processCommand(gameState, text);
   gameState = result.state;
+  updateStatusBar(gameState);
   renderOutput(result.lines);
   // Leave a blank line after the reply, before the next prompt.
   if (result.lines.length > 0) {
@@ -387,6 +542,7 @@ function handleSubmit(event) {
 // (Requirement 2.4)
 function init() {
   gameState = INITIAL_STATE;
+  updateStatusBar(gameState);
   renderOutput([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
   const form = document.getElementById("command-form");
   form.addEventListener("submit", handleSubmit);

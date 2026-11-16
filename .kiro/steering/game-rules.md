@@ -19,3 +19,12 @@ A haunted text adventure that runs in a web page, in the style of old games like
 - Keep the code simple, with short comments, because the developer is a beginner.
 - Make one small change at a time and explain what it does.
 - Do not run syntax checks or install tools like Node.js. The developer tests in the browser.
+
+## Story
+The player is trapped in a haunted house. The front door locked itself and the key is in the cellar. An unseen presence called the Caretaker haunts the player. The tone is quiet, cold and unsettling, never gory. Keep new text short and atmospheric.
+
+## Fear
+The game keeps a fear number from 0 to 100 in the game state. Only game code changes it. The narrator never decides it.
+
+## Existing code
+The developer also edits files by hand. Always read the current game.js, index.html and style.css before changing them, and keep the developer's changes.

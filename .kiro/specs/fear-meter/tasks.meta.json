@@ -1,0 +1,172 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add the Fear_Constants block at the very top of `game.js`": [
+      {
+        "executionId": "dada8b65-a412-4b33-a2ea-a12ec06e0429",
+        "chatSessionId": "sess_a1b0b6e4-01c2-4bfe-88d3-ba85468407de",
+        "timestamp": 1794769655982
+      },
+      {
+        "executionId": "dada8b65-a412-4b33-a2ea-a12ec06e0429",
+        "chatSessionId": "sess_a1b0b6e4-01c2-4bfe-88d3-ba85468407de",
+        "timestamp": 1794769698576
+      }
+    ],
+    "1. Add the fear constants": [
+      {
+        "executionId": "dada8b65-a412-4b33-a2ea-a12ec06e0429",
+        "chatSessionId": "sess_a1b0b6e4-01c2-4bfe-88d3-ba85468407de",
+        "timestamp": 1794769698719
+      }
+    ],
+    "2.1 Add `fear`, `shownThresholds` and `gameOver` to `INITIAL_STATE`": [
+      {
+        "executionId": "41c743cb-e522-4e6f-8420-652772fc6fde",
+        "chatSessionId": "sess_ec83b305-582e-47c3-9f8b-925e2f7eb949",
+        "timestamp": 1794770598095
+      },
+      {
+        "executionId": "41c743cb-e522-4e6f-8420-652772fc6fde",
+        "chatSessionId": "sess_ec83b305-582e-47c3-9f8b-925e2f7eb949",
+        "timestamp": 1794771084181
+      }
+    ],
+    "2. Add fear fields to the game state": [
+      {
+        "executionId": "41c743cb-e522-4e6f-8420-652772fc6fde",
+        "chatSessionId": "sess_ec83b305-582e-47c3-9f8b-925e2f7eb949",
+        "timestamp": 1794771084249
+      }
+    ],
+    "3.1 Mark unknown results in `handleUnknown`": [
+      {
+        "executionId": "0010b7d2-3651-45b2-8ee0-f6c9b403cf85",
+        "chatSessionId": "sess_bf71c22f-9185-4989-90ba-d4ae10da5051",
+        "timestamp": 1794771327196
+      },
+      {
+        "executionId": "0010b7d2-3651-45b2-8ee0-f6c9b403cf85",
+        "chatSessionId": "sess_bf71c22f-9185-4989-90ba-d4ae10da5051",
+        "timestamp": 1794771382228
+      }
+    ],
+    "3.2 Rename the current `processCommand` to `runCommand`": [
+      {
+        "executionId": "5a33ad3b-5568-4b7d-9576-c187dfb54e94",
+        "chatSessionId": "sess_d11529d8-a058-42c0-b2c5-ec3da6e6209e",
+        "timestamp": 1794773101568
+      },
+      {
+        "executionId": "5a33ad3b-5568-4b7d-9576-c187dfb54e94",
+        "chatSessionId": "sess_d11529d8-a058-42c0-b2c5-ec3da6e6209e",
+        "timestamp": 1794773132327
+      }
+    ],
+    "3. Prepare the existing command logic for wrapping": [
+      {
+        "executionId": "5a33ad3b-5568-4b7d-9576-c187dfb54e94",
+        "chatSessionId": "sess_d11529d8-a058-42c0-b2c5-ec3da6e6209e",
+        "timestamp": 1794773132419
+      }
+    ],
+    "4. Checkpoint - Check the existing game still runs": [
+      {
+        "executionId": "6567fc84-0137-4446-9404-a76c622e4819",
+        "chatSessionId": "sess_15de7eba-d461-4569-a07b-9f20f5a6ad3b",
+        "timestamp": 1794773213035
+      },
+      {
+        "executionId": "6567fc84-0137-4446-9404-a76c622e4819",
+        "chatSessionId": "sess_15de7eba-d461-4569-a07b-9f20f5a6ad3b",
+        "timestamp": 1794806725987
+      }
+    ],
+    "5.1 Write `applyFear(oldState, newState)`": [
+      {
+        "executionId": "d8423c6a-a51f-47eb-ad83-fb7a57dc627c",
+        "chatSessionId": "sess_90fd9c69-cedd-47f0-9def-1ffc835b8c6f",
+        "timestamp": 1794806781459
+      },
+      {
+        "executionId": "d8423c6a-a51f-47eb-ad83-fb7a57dc627c",
+        "chatSessionId": "sess_90fd9c69-cedd-47f0-9def-1ffc835b8c6f",
+        "timestamp": 1794806873353
+      }
+    ],
+    "5.2 Write `getThresholdLines(oldFear, newState)`": [
+      {
+        "executionId": "4a9eef7a-beba-492c-9564-1a303c0302fe",
+        "chatSessionId": "sess_93bba74d-b8ce-42dd-bf4d-748b314ac84a",
+        "timestamp": 1794807166447
+      },
+      {
+        "executionId": "4a9eef7a-beba-492c-9564-1a303c0302fe",
+        "chatSessionId": "sess_93bba74d-b8ce-42dd-bf4d-748b314ac84a",
+        "timestamp": 1794807231725
+      }
+    ],
+    "5.3 Write the new `processCommand(state, rawInput)` wrapper": [
+      {
+        "executionId": "47163c4b-c3f5-432f-8bb2-671153baff38",
+        "chatSessionId": "sess_7b7e2d53-69a5-4ed5-a8c6-f3d2f6e57dd2",
+        "timestamp": 1794808436296
+      },
+      {
+        "executionId": "47163c4b-c3f5-432f-8bb2-671153baff38",
+        "chatSessionId": "sess_7b7e2d53-69a5-4ed5-a8c6-f3d2f6e57dd2",
+        "timestamp": 1794808469021
+      }
+    ],
+    "5. Add the fear logic": [
+      {
+        "executionId": "47163c4b-c3f5-432f-8bb2-671153baff38",
+        "chatSessionId": "sess_7b7e2d53-69a5-4ed5-a8c6-f3d2f6e57dd2",
+        "timestamp": 1794808469078
+      }
+    ],
+    "6.1 Write `getStatusText(state)`": [
+      {
+        "executionId": "8b6c70c7-4dd3-4f58-88a5-ea83b73db022",
+        "chatSessionId": "sess_05954353-5832-47ff-bae3-1fe9d5631756",
+        "timestamp": 1794808932581
+      },
+      {
+        "executionId": "8b6c70c7-4dd3-4f58-88a5-ea83b73db022",
+        "chatSessionId": "sess_05954353-5832-47ff-bae3-1fe9d5631756",
+        "timestamp": 1794808958092
+      }
+    ],
+    "6.2 Add `updateStatusBar(state)` and call it from `handleSubmit` and `init`": [
+      {
+        "executionId": "663512dd-a591-472e-9526-ade03f0ae8c3",
+        "chatSessionId": "sess_bd2deaaf-cf2a-4635-80b5-93b3e1abfed0",
+        "timestamp": 1794810283553
+      },
+      {
+        "executionId": "663512dd-a591-472e-9526-ade03f0ae8c3",
+        "chatSessionId": "sess_bd2deaaf-cf2a-4635-80b5-93b3e1abfed0",
+        "timestamp": 1794810310729
+      }
+    ],
+    "6. Show fear in the status bar": [
+      {
+        "executionId": "663512dd-a591-472e-9526-ade03f0ae8c3",
+        "chatSessionId": "sess_bd2deaaf-cf2a-4635-80b5-93b3e1abfed0",
+        "timestamp": 1794810310836
+      }
+    ],
+    "7. Final checkpoint - Ensure everything works": [
+      {
+        "executionId": "b3961052-4c31-4007-8d3d-04d4605e1155",
+        "chatSessionId": "sess_fa96436b-eac4-44ce-b28e-32e53002d574",
+        "timestamp": 1794812035995
+      },
+      {
+        "executionId": "b3961052-4c31-4007-8d3d-04d4605e1155",
+        "chatSessionId": "sess_fa96436b-eac4-44ce-b28e-32e53002d574",
+        "timestamp": 1794812089119
+      }
+    ]
+  }
+}
