@@ -28,3 +28,6 @@ The game keeps a fear number from 0 to 100 in the game state. Only game code cha
 
 ## Existing code
 The developer also edits files by hand. Always read the current game.js, index.html and style.css before changing them, and keep the developer's changes.
+
+## Lying narrator
+When fear is high, room descriptions may lie. Lies are written in the room data and chosen by game code from the fear number. A lie never changes the game state. The inventory command, results of actions, the status bar, the threshold lines and the ending text never lie.

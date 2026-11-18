@@ -68,7 +68,13 @@ const INITIAL_STATE = {
       description: "You stand in an old hallway of a haunted house. Dust coats the floorboards and cobwebs drape the walls. Pale moonlight leaks through the shutters. A cold draught seeps from a dark archway deeper in, and behind you the front door waits, silent and shut.",
       items: ["lamp"],
       exits: { north: "library" },
-      blocked: { south: "The front door is locked. It will not budge." }
+      blocked: { south: "The front door is locked. It will not budge." },
+      details: {
+        door: "Solid oak, banded with iron. The lock is old and the keyhole is black. It does not move when you push.",
+        archway: "A dark opening deeper in. The draught that comes through it smells of paper and old ink.",
+        shutters: "Nailed shut from the inside. Whoever did it wanted something kept out, or something kept in.",
+        dust: "Only your footprints, and a long smear that runs through the dust toward the archway, as if something heavy was dragged that way, many times."
+      }
     },
     library: {
       name: "Library",
@@ -229,7 +235,7 @@ function handleGo(state, direction) {
     // Move there: show the arrival line first, then the room itself.
     const newState = { ...state, currentRoomId: nextRoomId };
     const lines = [];
-    
+
     // An arrival can be one text, or a set of texts depending on where you came from.
     let arrival = nextRoom.arrival;
     if (arrival && typeof arrival === "object") {
@@ -272,13 +278,30 @@ function handleInventory(state) {
 function handleExamine(state, noun) {
   const room = state.rooms[state.currentRoomId];
 
-  // Other words for the same thing.
   const aliases = {
     diary: "page", note: "page", paper: "page",
     books: "shelves", bookshelf: "shelves", bookshelves: "shelves",
-    carpet: "rug"
+    carpet: "rug",
+    doorway: "archway", arch: "archway",
+    floor: "dust", floorboards: "dust", cobwebs: "dust", webs: "dust",
+    moonlight: "shutters"
   };
-  const thing = aliases[noun] || noun;
+
+  // Examining the room itself is the same as looking around.
+  if (noun === "room" || noun === room.name.toLowerCase()) {
+    return handleLook(state);
+  }
+
+  // Try the full phrase ("reading desk"), then each word from the end
+  // ("desk"), so the player does not need to type the exact word.
+  const words = noun.split(" ");
+  let thing = noun;
+  for (const candidate of [noun, ...words.slice().reverse()]) {
+    const name = aliases[candidate] || candidate;
+    const known = (room.details && room.details[name]) ||
+      room.items.includes(name) || state.carriedItems.includes(name);
+    if (known) { thing = name; break; }
+  }
 
   // Something fixed in the room (desk, rug, page...).
   if (room.details && room.details[thing]) {
@@ -445,6 +468,13 @@ function handleTakeLamp(state) {
 function runCommand(state, rawInput) {
   const command = normalizeCommand(rawInput);
 
+  // A verb with no object: ask what the player means. "unknown: true" keeps
+  // this free of fear, like other unrecognized text.
+  const askBack = { examine: "Examine what?", take: "Take what?", go: "Go where?", read: "Read what?" };
+  if (askBack[command]) {
+    return { state, lines: [askBack[command]], unknown: true };
+  }
+
   // examine <thing>: look closely at something. Several words work.
   for (const word of ["examine ", "read ", "look at ", "inspect "]) {
     if (command.startsWith(word)) {
@@ -453,7 +483,7 @@ function runCommand(state, rawInput) {
   }
 
   // move rug: reveal the trapdoor. (Several words work.)
-  if (["move rug", "pull rug", "lift rug", "drag rug"].includes(command)) {
+  if (["move rug", "pull rug", "lift rug", "drag rug", "push rug", "slide rug", "remove rug", "shift rug", "look under rug"].includes(command)) {
     return handleMoveRug(state);
   }
 
