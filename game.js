@@ -72,7 +72,10 @@ const INITIAL_STATE = {
     },
     library: {
       name: "Library",
-      arrival: "You duck under the archway. The air is colder here and smells of old paper and wet stone.",
+      arrival: {
+        hallway: "You duck under the archway. The air is colder here and smells of old paper and wet stone.",
+        cellar: "You climb the steps back up. The trapdoor's cold breath follows you into the room."
+      },
       description: "Shelves lean against the walls, their books swollen and rotten. A reading desk stands in the middle of the room, a moth-eaten rug beneath it. The only light comes from the way you came in.",
       items: [],
       exits: { south: "hallway" },
@@ -226,8 +229,14 @@ function handleGo(state, direction) {
     // Move there: show the arrival line first, then the room itself.
     const newState = { ...state, currentRoomId: nextRoomId };
     const lines = [];
-    if (nextRoom.arrival) {
-      lines.push(nextRoom.arrival, "\u00A0");
+    
+    // An arrival can be one text, or a set of texts depending on where you came from.
+    let arrival = nextRoom.arrival;
+    if (arrival && typeof arrival === "object") {
+      arrival = arrival[state.currentRoomId];
+    }
+    if (arrival) {
+      lines.push(arrival, "\u00A0");
     }
     lines.push(...handleLook(newState).lines);
     return { state: newState, lines };
