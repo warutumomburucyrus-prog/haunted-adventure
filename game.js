@@ -64,11 +64,20 @@ const INITIAL_STATE = {
   rooms: {
     hallway: {
       name: "Hallway",
-      arrival: "You step back into the hallway. The front door has not moved, but you feel watched.",
+      arrival: "You step back into the hallway. The front door has not moved, and neither has the lock. You came here for something you do not have yet.",
+      arrivalWithKey: "You step into the hallway with the key cold in your fist. The front door waits, and you could swear the lock is listening.",
       description: "You stand in an old hallway of a haunted house. Dust coats the floorboards and cobwebs drape the walls. Pale moonlight leaks through the shutters. A cold draught seeps from a dark archway deeper in, and behind you the front door waits, silent and shut.",
       items: ["lamp"],
       exits: { north: "library" },
       blocked: { south: "The front door is locked. It will not budge." },
+      // Lies shown when fear is high. "replaces" must match the room text exactly.
+      lies: [
+        {
+          minFear: 50,
+          replaces: "behind you the front door waits, silent and shut.",
+          text: "behind you the front door stands open to the night."
+        }
+      ],
       details: {
         door: "Solid oak, banded with iron. The lock is old and the keyhole is black. It does not move when you push.",
         archway: "A dark opening deeper in. The draught that comes through it smells of paper and old ink.",
@@ -127,7 +136,7 @@ const ITEM_TEXT = {
 
 // ITEM_DETAILS is what the player sees when examining an item.
 const ITEM_DETAILS = {
-  lamp: "An old oil lamp, heavy and half full. The glass is cracked, but the wick still takes a flame.",
+  lamp: "An old oil lamp, heavy and half full. The glass is cracked, but the wick still takes a flame and might be useful.",
   key: "An old iron key, heavy and cold, its teeth worn smooth. Rust has eaten the edges, but it looks as if it would still turn."
 };
 
@@ -200,15 +209,55 @@ function handleUnknown(state) {
   return { state, lines: ["That command is not recognized."], unknown: true };
 }
 
+// applyLies swaps true sentences for false ones when fear is high.
+// It only returns text. It never changes the game state.
+function applyLies(room, text, fear, carriedItems) {
+  // No lies list (or not a list): show the true text.
+  if (!Array.isArray(room.lies)) {
+    return text;
+  }
+
+  // For each true sentence, remember the active lie with the highest minFear.
+  const best = {};
+  for (const lie of room.lies) {
+    // Ignore a lie with a missing or wrong field.
+    const valid = lie &&
+      Number.isInteger(lie.minFear) &&
+      typeof lie.replaces === "string" && lie.replaces !== "" &&
+      typeof lie.text === "string" && lie.text !== "";
+    if (!valid) continue;
+
+    // Skip a lie that is not active yet, or is switched off by an item.
+    if (fear < lie.minFear) continue;
+    if (lie.unlessCarried && carriedItems.includes(lie.unlessCarried)) continue;
+
+    const current = best[lie.replaces];
+    if (!current || lie.minFear > current.minFear) {
+      best[lie.replaces] = lie;
+    }
+  }
+
+  // Replace each true sentence found in the text with its false one.
+  let result = text;
+  for (const replaces in best) {
+    result = result.split(replaces).join(best[replaces].text);
+  }
+  return result;
+}
+
 // handleLook shows the current room's description and lists any items
 // present in that room. It does not change the game state, so the same
 // state reference is returned. (Requirement 4.1)
+// The text goes through applyLies, which may swap in a false sentence.
+// handleLook runs before applyFear, so it sees the fear from before
+// this command's cost is added.
 function handleLook(state) {
   const room = state.rooms[state.currentRoomId];
-  const lines = [room.description];
+  const lines = [applyLies(room, room.description, state.fear, state.carriedItems)];
   // Mention each item present in the room so the player can see it.
   for (const item of room.items) {
-    lines.push(ITEM_TEXT[item] || "There is a " + item + " here.");
+    const itemText = ITEM_TEXT[item] || "There is a " + item + " here.";
+    lines.push(applyLies(room, itemText, state.fear, state.carriedItems));
   }
   return { state, lines };
 }
@@ -241,8 +290,15 @@ function handleGo(state, direction) {
     if (arrival && typeof arrival === "object") {
       arrival = arrival[state.currentRoomId];
     }
+
+    // If the player carries the key, the hallway greets them differently.
+    if (nextRoom.arrivalWithKey && state.carriedItems.includes("key")) {
+      arrival = nextRoom.arrivalWithKey;
+    }
+
     if (arrival) {
-      lines.push(arrival, "\u00A0");
+      // applyLies may swap in a false sentence when fear is high (text only).
+      lines.push(applyLies(nextRoom, arrival, state.fear, state.carriedItems), "\u00A0");
     }
     lines.push(...handleLook(newState).lines);
     return { state: newState, lines };

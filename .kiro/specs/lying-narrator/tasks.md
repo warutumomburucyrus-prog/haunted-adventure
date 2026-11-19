@@ -6,8 +6,8 @@ All changes are in game.js. index.html and style.css stay as they are. First add
 
 ## Tasks
 
-- [ ] 1. Add the lie engine and connect it to room text
-  - [ ] 1.1 Add the `applyLies` function to game.js
+- [x] 1. Add the lie engine and connect it to room text
+  - [x] 1.1 Add the `applyLies` function to game.js
     - Place it just above `handleLook`, with a short beginner-friendly comment
     - It takes `(room, text, fear, carriedItems)` and returns a string. It never receives or returns a state
     - Return the text unchanged if `room.lies` is not an array
@@ -17,24 +17,24 @@ All changes are in game.js. index.html and style.css stay as they are. First add
     - Explain to the developer what the function does and why it cannot change the game state
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.4, 2.5, 3.1, 3.5_
 
-  - [ ] 1.2 Use `applyLies` in `handleLook`
+  - [x] 1.2 Use `applyLies` in `handleLook`
     - Wrap the room description and each item line with `applyLies`, passing `state.fear` and `state.carriedItems`
     - Keep the existing fallback line "There is a ... here." for items with no `ITEM_TEXT` entry
     - Leave `handleInventory`, `handleExamine`, the action handlers, `getThresholdLines`, `getStatusText`, `INTRO`, `ESCAPE_LINES` and `GAME_OVER_LINES` untouched
     - Explain that `handleLook` runs before `applyFear`, so it sees the Fear from before the command's cost
     - _Requirements: 2.1, 2.3, 2.7, 4.1, 4.2, 4.5, 4.6, 4.7, 4.8, 9.1, 9.5_
 
-  - [ ] 1.3 Use `applyLies` on the arrival text in `handleGo`
+  - [x] 1.3 Use `applyLies` on the arrival text in `handleGo`
     - Wrap the arrival text with `applyLies(nextRoom, arrival, state.fear, state.carriedItems)` before it is added to `lines`
     - Leave the movement, the dark-room check and the blocked messages unchanged
     - The room description shown after arrival already goes through `handleLook`, so it needs no further change
     - _Requirements: 2.2, 3.2, 5.5, 6.6, 7.5, 7.6, 9.1, 9.3_
 
-- [ ] 2. Checkpoint - Check the engine in the browser
+- [x] 2. Checkpoint - Check the engine in the browser
   - Ask the developer to reload the page and play a few commands. All room text should read exactly as before, because no room has lies yet. Ask the user if questions arise.
 
 - [ ] 3. Add the lies to the room data
-  - [ ] 3.1 Add the hallway lie
+  - [x] 3.1 Add the hallway lie
     - Add a `lies` list to the `hallway` room in `INITIAL_STATE`, with a comment saying `replaces` must match the room text exactly
     - One lie: `minFear: 50`, `replaces: "behind you the front door waits, silent and shut."`, `text: "behind you the front door stands open to the night."`
     - Explain that "go south" still gives the locked-door message

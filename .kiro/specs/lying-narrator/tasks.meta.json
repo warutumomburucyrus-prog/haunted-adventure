@@ -1,0 +1,72 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add the `applyLies` function to game.js": [
+      {
+        "executionId": "1e709e78-4e4f-46b0-8b20-d3e10a00aad5",
+        "chatSessionId": "sess_09a85012-e038-412d-8f6f-121a6c75ce92",
+        "timestamp": 1795053807427
+      },
+      {
+        "executionId": "1e709e78-4e4f-46b0-8b20-d3e10a00aad5",
+        "chatSessionId": "sess_09a85012-e038-412d-8f6f-121a6c75ce92",
+        "timestamp": 1795053836179
+      }
+    ],
+    "1.2 Use `applyLies` in `handleLook`": [
+      {
+        "executionId": "15b626cc-e014-45c0-bbfc-71a24aa9c5e2",
+        "chatSessionId": "sess_3e3977ae-4898-44a8-9a39-af0ce53bc28d",
+        "timestamp": 1795056756718
+      },
+      {
+        "executionId": "15b626cc-e014-45c0-bbfc-71a24aa9c5e2",
+        "chatSessionId": "sess_3e3977ae-4898-44a8-9a39-af0ce53bc28d",
+        "timestamp": 1795056784378
+      }
+    ],
+    "1.3 Use `applyLies` on the arrival text in `handleGo`": [
+      {
+        "executionId": "660be6bb-c6f2-4396-b7f7-681800dc4c76",
+        "chatSessionId": "sess_3181ab3d-ea69-4320-8df7-03d8bde8b895",
+        "timestamp": 1795057773172
+      },
+      {
+        "executionId": "660be6bb-c6f2-4396-b7f7-681800dc4c76",
+        "chatSessionId": "sess_3181ab3d-ea69-4320-8df7-03d8bde8b895",
+        "timestamp": 1795057794136
+      }
+    ],
+    "1. Add the lie engine and connect it to room text": [
+      {
+        "executionId": "660be6bb-c6f2-4396-b7f7-681800dc4c76",
+        "chatSessionId": "sess_3181ab3d-ea69-4320-8df7-03d8bde8b895",
+        "timestamp": 1795057794258
+      }
+    ],
+    "2. Checkpoint - Check the engine in the browser": [
+      {
+        "executionId": "cac8247e-8576-466e-b558-204cb531c4fa",
+        "chatSessionId": "sess_d4c66c87-e332-4eee-8bcb-173bdc65503a",
+        "timestamp": 1795057872521
+      },
+      {
+        "executionId": "cac8247e-8576-466e-b558-204cb531c4fa",
+        "chatSessionId": "sess_d4c66c87-e332-4eee-8bcb-173bdc65503a",
+        "timestamp": 1795059848500
+      }
+    ],
+    "3.1 Add the hallway lie": [
+      {
+        "executionId": "2849b275-66e3-4c08-b3a5-cbb71a8d24cf",
+        "chatSessionId": "sess_6c35fa10-7b1d-4f8b-a74e-06d6927035d7",
+        "timestamp": 1795059858720
+      },
+      {
+        "executionId": "2849b275-66e3-4c08-b3a5-cbb71a8d24cf",
+        "chatSessionId": "sess_6c35fa10-7b1d-4f8b-a74e-06d6927035d7",
+        "timestamp": 1795059883070
+      }
+    ]
+  }
+}
