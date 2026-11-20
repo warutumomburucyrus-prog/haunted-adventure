@@ -114,7 +114,7 @@ All changes are in `game.js`. `index.html` and `style.css` do not change. Read t
     - Lit lamp: move on and keep the existing Cellar fear cost and entry fear
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [x] 9. Final checkpoint - Walk through the game
+- [-] 9. Final checkpoint - Walk through the game
   - Ask the user to play through the walkthrough from the design in the browser, and ask if questions arise.
   - _Requirements: 12.5, 12.6, 12.7, 13.1, 13.2, 13.4, 13.6, 13.7, 13.8_
 
