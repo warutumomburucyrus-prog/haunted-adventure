@@ -73,7 +73,7 @@ const INITIAL_STATE = {
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 50,
+          minFear: 30,
           replaces: "behind you the front door waits, silent and shut.",
           text: "behind you the front door stands open to the night."
         }
@@ -97,7 +97,7 @@ const INITIAL_STATE = {
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 50,
+          minFear: 30,
           replaces: "The only light comes from the way you came in.",
           text: "The way back is bricked up. Only bare wall remains."
         }
@@ -119,12 +119,12 @@ const INITIAL_STATE = {
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 50,
+          minFear: 30,
           replaces: "the steps behind you lead back up.",
           text: "the steps behind you have collapsed."
         },
         {
-          minFear: 75,
+          minFear: 45,
           // This "replaces" text is a copy of ITEM_TEXT.key. ITEM_TEXT is defined
           // after INITIAL_STATE, so it is copied here. Edit both together.
           replaces: "In the hollow, an old iron key lies in the dust, dull and cold, as if it has waited a long time.",
