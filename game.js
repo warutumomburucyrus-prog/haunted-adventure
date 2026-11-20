@@ -121,7 +121,7 @@ const INITIAL_STATE = {
         archway: "A dark opening deeper in. The draught that comes through it smells of paper and old ink.",
         shutters: "Nailed shut from the inside. Whoever did it wanted something kept out, or something kept in.",
         dust: "Only your footprints, and a long smear that runs through the dust toward the archway, as if something heavy was dragged that way, many times.",
-        narrow_door: "A narrow door in the side wall, its wood swollen with damp. The keyhole is small, and the door does not move when you push."
+        "narrow door": "A narrow door in the side wall, its wood swollen with damp. The keyhole is small, and the door does not move when you push."
       }
     },
     library: {
@@ -274,7 +274,7 @@ const HINT_TEXT = [
   [
     "The dark will not forgive you for walking into it empty-handed.",
     "Something brass lies near your feet, made to carry a flame.",
-    "The old oil lamp in this hallway. Pick it up before you go further."
+    "The old oil lamp lies in this hallway. Pick it up before you go further."
   ],
   // Step 2: go north to the Library
   [
@@ -288,44 +288,79 @@ const HINT_TEXT = [
     "Look closely at what stands in the middle of the Library.",
     "The reading desk holds a torn page. Study the desk, then the page."
   ],
-  // Step 4: pull the rug aside
+  // Step 4: open the odd book and take the brass key
+  [
+    "Not everything on these shelves has rotted the same way.",
+    "One book is drier and heavier than the rest. Something is wedged behind it.",
+    "Pull the odd book from the Library shelf, then lift the small brass key from behind it."
+  ],
+  // Step 5: unlock the kitchen door and go in
+  [
+    "A small keyhole has waited in the Hallway all this time.",
+    "The narrow door in the Hallway's side wall fits the key you found.",
+    "Turn the brass key in the narrow Hallway door, then step through into the Kitchen."
+  ],
+  // Step 6: open the kitchen drawer, then take the lighter and the rusty key
+  [
+    "Something in this room is kept shut.",
+    "A drawer hangs beneath the counter, and something inside it shifts.",
+    "Look inside the Kitchen drawer, then carry off the lighter and the rusty key."
+  ],
+  // Step 7: unlock the storeroom door, go in and take the oil can
+  [
+    "Another door waits at the far end, its keyhole crusted with rust.",
+    "The rusty key fits the far door of the Kitchen. Beyond it, tin glints among jars.",
+    "Turn the rusty key in the far Kitchen door, step into the Storeroom and carry off the oil can."
+  ],
+  // Step 8: fill the lamp
+  [
+    "A lamp that is dry will not burn.",
+    "You carry something that holds oil, and something else that wants it.",
+    "Pour the oil from the can into the lamp."
+  ],
+  // Step 9: light the lamp
+  [
+    "Oil alone is not a flame.",
+    "The lamp is full now. Something in your pocket can wake the wick.",
+    "Use the lighter on the wick until the flame holds."
+  ],
+  // Step 10: pull the rug aside
   [
     "The floor remembers where something heavy has been moved.",
     "One edge of the floor covering curls away from the boards.",
     "The moth-eaten rug in the Library hides something. Drag it aside."
   ],
-  // Step 5: go down to the Cellar
+  // Step 11: go down to the cellar
   [
     "The cold that rises here comes from below.",
     "Something gapes in the floor now, and the air through it smells of earth.",
     "The trapdoor in the Library leads down to the Cellar. Bring your light."
   ],
-  // Step 6: examine the wall
+  // Step 12: examine the wall
   [
     "Something in this room has been said many times.",
     "The walls here are not as blank as they first seem.",
     "Scratched words cover the Cellar wall. Study them closely."
   ],
-  // Step 7: pull the crooked stone
+  // Step 13: pull the crooked stone
   [
     "One thing here sits out of line with the rest.",
     "Worn edges show that hands have gripped it before.",
     "The crooked stone in the Cellar wall will move if you pull it."
   ],
-  // Step 8: take the key
+  // Step 14: take the iron key
   [
     "What the house hid is waiting where the stone used to be.",
     "Something cold and made of iron lies in the hollow.",
     "The old iron key is in the hollow in the Cellar wall. Pick it up."
   ],
-  // Step 9: go back up to the Hallway and unlock the front door
+  // Step 15: go back up to the hallway and unlock the front door
   [
     "You have what you came for. Now return to where you started.",
     "The way out has not moved, and neither has its lock.",
-    "Climb back up to the Hallway. The key was made for the front door."
+    "Climb back up to the Hallway. The iron key was made for the front door."
   ]
 ];
-
 // gameState holds the current state as the player plays.
 // It starts empty here; init() sets it to INITIAL_STATE when the page loads.
 let gameState;
@@ -967,30 +1002,49 @@ function handleOpenBook(state) {
   return { state: newState, lines: ["You pull the wrong book from the shelf. Behind it, in a hollow, lies a small brass key."] };
 }
 
-// isStepDone says if an escape step (1 to 8) is done, using only the state.
-function isStepDone(state, step) {
-  const library = state.rooms.library;
-  const cellar = state.rooms.cellar;
+// STEP_COUNT is how many escape steps there are.
+const STEP_COUNT = 15;
+
+// isStepDoneOwn says if one step is done by its own facts only.
+// It reads only the state, never the player's text.
+function isStepDoneOwn(state, step) {
+  const has = item => state.carriedItems.includes(item);
   switch (step) {
-    case 1: return state.carriedItems.includes("lamp");
+    case 1: return has("lamp");
     case 2: return state.libraryEntered;
     case 3: return state.deskExamined && state.pageExamined;
-    case 4: return Boolean(library.exits.down);
-    case 5: return state.cellarEntered;
-    case 6: return state.wallExamined;
-    case 7: return Boolean(cellar.stoneMoved);
-    case 8: return state.carriedItems.includes("key");
+    case 4: return state.bookPulled && has("brass key");
+    case 5: return state.kitchenDoorUnlocked;
+    case 6: return state.drawerOpen && has("lighter") && has("rusty key");
+    case 7: return state.storeroomDoorUnlocked && has("oil can");
+    case 8: return state.fueled;
+    case 9: return state.lit;
+    case 10: return Boolean(state.rooms.library.exits.down);
+    case 11: return state.cellarEntered;
+    case 12: return state.wallExamined;
+    case 13: return Boolean(state.rooms.cellar.stoneMoved);
+    case 14: return has("key");
     default: return false;
   }
 }
 
+// isStepDone says if an escape step (1 to 14) is done. A step also counts
+// as done when any later step is done, so a player who skips ahead never
+// gets a stale hint.
+function isStepDone(state, step) {
+  for (let later = step; later < STEP_COUNT; later++) {
+    if (isStepDoneOwn(state, later)) return true;
+  }
+  return false;
+}
+
 // getCurrentStep returns the first step that is not done.
-// If steps 1 to 8 are all done, it returns 9.
+// If steps 1 to 14 are all done, it returns 15.
 function getCurrentStep(state) {
-  for (let step = 1; step <= 8; step++) {
+  for (let step = 1; step < STEP_COUNT; step++) {
     if (!isStepDone(state, step)) return step;
   }
-  return 9;
+  return STEP_COUNT;
 }
 
 // handleHint shows one hint for the current step. The hint gets clearer
