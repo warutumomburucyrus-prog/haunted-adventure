@@ -225,6 +225,17 @@ function renderOutput(lines) {
   output.scrollTop = form.offsetTop - output.clientHeight / 2;
 }
 
+// showTyped draws what the player has typed, with the underscore cursor
+// under the character at the caret, so the arrow keys show where you are.
+function showTyped() {
+  const input = document.getElementById("command-input");
+  const text = input.value;
+  const pos = input.selectionStart;
+  document.getElementById("typed").textContent = text.slice(0, pos);
+  document.getElementById("cursor").textContent = text.charAt(pos) || "\u00A0";
+  document.getElementById("typed-after").textContent = text.slice(pos + 1);
+}
+
 // handleUnknown is used when the player types something that is not a
 // known command. It returns a "not recognized" message and gives back the
 // exact same state, so nothing in the game changes.
@@ -763,7 +774,7 @@ function handleSubmit(event) {
     renderOutput(["\u00A0"]);
   }
   input.value = "";
-  document.getElementById("typed").textContent = "";
+  showTyped();
   input.focus();
 }
 
@@ -779,9 +790,13 @@ function init() {
   form.addEventListener("submit", handleSubmit);
   document.getElementById("command-input").focus();
   document.addEventListener("click", () => document.getElementById("command-input").focus());
-  const typed = document.getElementById("typed");
-  const input = document.getElementById("command-input");
-  input.addEventListener("input", () => { typed.textContent = input.value; });
+  const typingBox = document.getElementById("command-input");
+  for (const eventName of ["input", "keyup", "click", "select"]) {
+    typingBox.addEventListener(eventName, showTyped);
+  }
+  // On keydown the caret has not moved yet, so check again a moment later.
+  typingBox.addEventListener("keydown", () => setTimeout(showTyped, 0));
+  showTyped();
 }
 
 // Start the game when the page is ready. The document check keeps this
