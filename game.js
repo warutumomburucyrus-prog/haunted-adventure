@@ -121,7 +121,7 @@ const INITIAL_STATE = {
         archway: "A dark opening deeper in. The draught that comes through it smells of paper and old ink.",
         shutters: "Nailed shut from the inside. Whoever did it wanted something kept out, or something kept in.",
         dust: "Only your footprints, and a long smear that runs through the dust toward the archway, as if something heavy was dragged that way, many times.",
-        narrow door: "A narrow door in the side wall, its wood swollen with damp. The keyhole is small, and the door does not move when you push."
+        narrow_door: "A narrow door in the side wall, its wood swollen with damp. The keyhole is small, and the door does not move when you push."
       }
     },
     library: {
