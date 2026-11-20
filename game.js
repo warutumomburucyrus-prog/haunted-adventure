@@ -94,6 +94,14 @@ const INITIAL_STATE = {
       description: "Shelves lean against the walls, their books swollen and rotten. A reading desk stands in the middle of the room, a moth-eaten rug beneath it. The only light comes from the way you came in.",
       items: [],
       exits: { south: "hallway" },
+      // Lies shown when fear is high. "replaces" must match the room text exactly.
+      lies: [
+        {
+          minFear: 50,
+          replaces: "The only light comes from the way you came in.",
+          text: "The way back is bricked up. Only bare wall remains."
+        }
+      ],
       details: {
         desk: "A heavy reading desk, its drawers pulled out and emptied long ago. One thing was left behind: a torn page, pinned beneath a candle stub.",
         page: "The handwriting slants and shakes. \"I turned the key myself and I cannot undo it. He took it down to the cellar and he will not give it up. Do not go below without a light. Do not trust what the house tells you once the fear takes hold. It lies. Trust only what you can hold in your hands.\"",
@@ -108,6 +116,23 @@ const INITIAL_STATE = {
       items: [],
       exits: { up: "library" },
       needsLight: true,
+      // Lies shown when fear is high. "replaces" must match the room text exactly.
+      lies: [
+        {
+          minFear: 50,
+          replaces: "the steps behind you lead back up.",
+          text: "the steps behind you have collapsed."
+        },
+        {
+          minFear: 75,
+          // This "replaces" text is a copy of ITEM_TEXT.key. ITEM_TEXT is defined
+          // after INITIAL_STATE, so it is copied here. Edit both together.
+          replaces: "In the hollow, an old iron key lies in the dust, dull and cold, as if it has waited a long time.",
+          text: "The key is already in your hand, cold against your palm.",
+          // The lie switches off once the player really carries the key.
+          unlessCarried: "key"
+        }
+      ],
       details: {
         wall: "The same words, scratched again and again until the stone is raw: DO NOT ANSWER HIM. Beneath them, one stone sits crooked in the wall.",
         stone: "A square stone, set a little out of line with the rest. Its edges are worn, as if hands have gripped it before."

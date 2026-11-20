@@ -67,6 +67,76 @@
         "chatSessionId": "sess_6c35fa10-7b1d-4f8b-a74e-06d6927035d7",
         "timestamp": 1795059883070
       }
+    ],
+    "3.2 Add the library lie": [
+      {
+        "executionId": "4f940a77-b886-412b-a658-154fadf9040e",
+        "chatSessionId": "sess_65553152-4522-40cf-98d5-668cf0363e58",
+        "timestamp": 1795107410037
+      },
+      {
+        "executionId": "4f940a77-b886-412b-a658-154fadf9040e",
+        "chatSessionId": "sess_65553152-4522-40cf-98d5-668cf0363e58",
+        "timestamp": 1795107478412
+      }
+    ],
+    "3.3 Add the cellar steps lie": [
+      {
+        "executionId": "793b6f8c-3d2f-4612-809e-e4686fffa7a0",
+        "chatSessionId": "sess_4cb999bc-4f73-4f9a-a794-5efe4ad25a9b",
+        "timestamp": 1795113945654
+      },
+      {
+        "executionId": "3b24c8c2-49f3-4d9f-8fcb-e6136b630942",
+        "chatSessionId": "sess_5de71f69-d335-4330-b7b9-9694cd14c7e9",
+        "timestamp": 1795123267424
+      },
+      {
+        "executionId": "3b24c8c2-49f3-4d9f-8fcb-e6136b630942",
+        "chatSessionId": "sess_5de71f69-d335-4330-b7b9-9694cd14c7e9",
+        "timestamp": 1795123322346
+      },
+      {
+        "executionId": "2cfd630d-fb67-4a5a-8f2d-ae01517c3b5b",
+        "chatSessionId": "sess_dae8253b-e30a-405e-bf09-bec9a5d7b512",
+        "timestamp": 1795123340939
+      },
+      {
+        "executionId": "2cfd630d-fb67-4a5a-8f2d-ae01517c3b5b",
+        "chatSessionId": "sess_dae8253b-e30a-405e-bf09-bec9a5d7b512",
+        "timestamp": 1795123378130
+      }
+    ],
+    "3.4 Add the cellar key lie": [
+      {
+        "executionId": "363cfa66-2a14-4065-bf4f-b9be71feb60d",
+        "chatSessionId": "sess_d3ad1c30-da23-4b84-bd46-9d35ef2274ef",
+        "timestamp": 1795124020429
+      },
+      {
+        "executionId": "363cfa66-2a14-4065-bf4f-b9be71feb60d",
+        "chatSessionId": "sess_d3ad1c30-da23-4b84-bd46-9d35ef2274ef",
+        "timestamp": 1795124118721
+      }
+    ],
+    "3. Add the lies to the room data": [
+      {
+        "executionId": "363cfa66-2a14-4065-bf4f-b9be71feb60d",
+        "chatSessionId": "sess_d3ad1c30-da23-4b84-bd46-9d35ef2274ef",
+        "timestamp": 1795124118852
+      }
+    ],
+    "4. Final checkpoint - Play through the lies in the browser": [
+      {
+        "executionId": "e909d476-3b9c-49f4-ab4f-efd5c2884180",
+        "chatSessionId": "sess_c72a0f76-2b65-4d18-aa2b-317e8b71f445",
+        "timestamp": 1795128297740
+      },
+      {
+        "executionId": "e909d476-3b9c-49f4-ab4f-efd5c2884180",
+        "chatSessionId": "sess_c72a0f76-2b65-4d18-aa2b-317e8b71f445",
+        "timestamp": 1795128323434
+      }
     ]
   }
 }

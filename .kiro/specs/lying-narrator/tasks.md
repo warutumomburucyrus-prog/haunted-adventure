@@ -33,33 +33,33 @@ All changes are in game.js. index.html and style.css stay as they are. First add
 - [x] 2. Checkpoint - Check the engine in the browser
   - Ask the developer to reload the page and play a few commands. All room text should read exactly as before, because no room has lies yet. Ask the user if questions arise.
 
-- [ ] 3. Add the lies to the room data
+- [x] 3. Add the lies to the room data
   - [x] 3.1 Add the hallway lie
     - Add a `lies` list to the `hallway` room in `INITIAL_STATE`, with a comment saying `replaces` must match the room text exactly
     - One lie: `minFear: 50`, `replaces: "behind you the front door waits, silent and shut."`, `text: "behind you the front door stands open to the night."`
     - Explain that "go south" still gives the locked-door message
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-  - [ ] 3.2 Add the library lie
+  - [x] 3.2 Add the library lie
     - Add a `lies` list to the `library` room, with the same kind of comment
     - One lie: `minFear: 50`, `replaces: "The only light comes from the way you came in."`, `text: "The way back is bricked up. Only bare wall remains."`
     - Explain that "go south" still leads to the hallway
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
-  - [ ] 3.3 Add the cellar steps lie
+  - [x] 3.3 Add the cellar steps lie
     - Add a `lies` list to the `cellar` room, with the same kind of comment
     - One lie: `minFear: 50`, `replaces: "the steps behind you lead back up."`, `text: "the steps behind you have collapsed."`
     - Explain that "go up" still leads to the library
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 
-  - [ ] 3.4 Add the cellar key lie
+  - [x] 3.4 Add the cellar key lie
     - Add a second lie to the cellar `lies` list
     - `minFear: 75`, `replaces` is the full text of `ITEM_TEXT.key` ("In the hollow, an old iron key lies in the dust, dull and cold, as if it has waited a long time."), `text: "The key is already in your hand, cold against your palm."`, `unlessCarried: "key"`
     - Add a comment saying the `replaces` text is a copy of `ITEM_TEXT.key`, because `ITEM_TEXT` is defined after `INITIAL_STATE`, and both must be edited together
     - Explain that the inventory does not list the key and "take key" still works
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9_
 
-- [ ] 4. Final checkpoint - Play through the lies in the browser
+- [x] 4. Final checkpoint - Play through the lies in the browser
   - Ask the developer to follow the manual browser checks in design.md (low Fear, hallway, library, cellar steps, cellar key, truthful text, restart). Ask the user if questions arise.
 
 ## Notes
