@@ -120,7 +120,8 @@ const INITIAL_STATE = {
         door: "Solid oak, banded with iron. The lock is old and the keyhole is black. It does not move when you push.",
         archway: "A dark opening deeper in. The draught that comes through it smells of paper and old ink.",
         shutters: "Nailed shut from the inside. Whoever did it wanted something kept out, or something kept in.",
-        dust: "Only your footprints, and a long smear that runs through the dust toward the archway, as if something heavy was dragged that way, many times."
+        dust: "Only your footprints, and a long smear that runs through the dust toward the archway, as if something heavy was dragged that way, many times.",
+        narrow door: "A narrow door in the side wall, its wood swollen with damp. The keyhole is small, and the door does not move when you push."
       }
     },
     library: {
@@ -143,6 +144,7 @@ const INITIAL_STATE = {
       details: {
         desk: "A heavy reading desk, its drawers pulled out and emptied long ago. One thing was left behind: a torn page, pinned beneath a candle stub.",
         page: "The handwriting slants and shakes. \"I turned the key myself and I cannot undo it. He took it down to the cellar and he will not give it up. Do not go below without a light. Do not trust what the house tells you once the fear takes hold. It lies. Trust only what you can hold in your hands.\"",
+        book: "A thick book, dry where the others are rotten. The cover will not lie flat, as if something is wedged behind the pages.",
         shelves: "The books have rotted into blocks of grey pulp. One book feels wrong, drier and heavier than the rest.",
         rug: "A moth-eaten rug. One edge is curled back, and the boards beneath are a different colour from the rest of the floor."
       }
@@ -571,7 +573,7 @@ function handleExamine(state, noun) {
 
   const aliases = {
     diary: "page", note: "page", paper: "page",
-    books: "shelves", bookshelf: "shelves", bookshelves: "shelves",
+    shelf: "shelves", bookshelf: "shelves", bookcase: "shelves",
     carpet: "rug",
     doorway: "archway", arch: "archway",
     floor: "dust", floorboards: "dust", cobwebs: "dust", webs: "dust",
@@ -591,7 +593,7 @@ function handleExamine(state, noun) {
   const words = noun.split(" ");
   let thing = noun;
   for (const candidate of [noun, ...words.slice().reverse()]) {
-    let name = aliases[candidate] || candidate;
+    let name = aliases[candidate] || ITEM_NAMES[candidate] || candidate;
     // "key" means whichever key lies in this room, if there is one.
     if (candidate === "key" && findRoomKey(room)) name = findRoomKey(room);
     const known = (room.details && room.details[name]) ||
@@ -705,16 +707,38 @@ function handleTakeKey(state) {
   return { state, lines: ["There is no key here."] };
 }
 
-// handleUnlockDoor tries the front door. It only works in the hallway.
-// With the key the player escapes. Without it the lock does not give.
+// handleUnlockDoor tries a door by hand. In the hallway, the iron key opens
+// the front door (the escape). Any other locked door here opens if the player
+// carries its key, and the player stays where they are.
 function handleUnlockDoor(state) {
-  if (state.currentRoomId !== "hallway") {
-    return { state, lines: ["There is no door here to unlock."] };
+  const room = state.rooms[state.currentRoomId];
+  const locks = Object.values(room.locks || {});
+
+  // The front door: only in the hallway, and only with the iron key.
+  if (state.currentRoomId === "hallway" && state.carriedItems.includes("key")) {
+    return { state: { ...state, escaped: true }, lines: ESCAPE_LINES };
   }
-  if (!state.carriedItems.includes("key")) {
+
+  // A locked door here whose key the player carries: unlock it.
+  for (const lock of locks) {
+    if (!state[lock.unlockedFact] && state.carriedItems.includes(lock.keyItem)) {
+      return { state: { ...state, [lock.unlockedFact]: true }, lines: [lock.unlockLine] };
+    }
+  }
+
+  // The front door without the iron key.
+  if (state.currentRoomId === "hallway") {
     return { state, lines: ["You try the lock. It does not give."] };
   }
-  return { state: { ...state, escaped: true }, lines: ESCAPE_LINES };
+
+  // A locked door here, but no key for it yet.
+  for (const lock of locks) {
+    if (!state[lock.unlockedFact]) {
+      return { state, lines: [lock.lockedLine] };
+    }
+  }
+
+  return { state, lines: ["There is no door here to unlock."] };
 }
 
 // handleHelp reminds the player which words the game understands.
@@ -742,6 +766,17 @@ const ITEM_NAMES = {
   "oil can": "oil can",
   "oil": "oil can",
   "can": "oil can"
+};
+
+// TAKE_REFUSALS are the replies for things the player tries to take but cannot.
+const TAKE_REFUSALS = {
+  page: "The paper is too brittle to lift. Read it where it lies.",
+  desk: "The desk is far too heavy to carry.",
+  rug: "The rug is heavy with damp. You would rather look under it.",
+  stone: "The stone is wedged in the wall.",
+  drawer: "The drawer is part of the counter.",
+  door: "Doors do not come off that easily.",
+  shelves: "The shelves lean on the wall. They are not going anywhere."
 };
 
 // ROOM_KEY_IDS lists the ids of the keys that can lie in a room.
@@ -801,6 +836,14 @@ function handleTake(state, noun) {
   // The two special cases keep their own handlers.
   if (noun === "lamp") return handleTakeLamp(state);
   if (noun === "key") return handleTakeKey(state);
+
+  // Scenery the player cannot pick up gets its own reply, but only when
+  // the thing is really in this room.
+  const scenery = { diary: "page", note: "page", paper: "page" }[noun] || noun;
+  const here = state.rooms[state.currentRoomId].details;
+  if (here && here[scenery] && TAKE_REFUSALS[scenery]) {
+    return { state, lines: [TAKE_REFUSALS[scenery]] };
+  }
 
   // The word is not an item the game knows.
   if (!itemId) {
@@ -911,7 +954,14 @@ function handleOpenBook(state) {
     rooms: {
       ...state.rooms,
       // New array: the old items plus the brass key.
-      library: { ...room, items: [...room.items, "brass key"] }
+      library: {
+        ...room,
+        items: [...room.items, "brass key"],
+        details: {
+          ...room.details,
+          book: "The book hangs open, its pages cut into a hollow the shape of what it held."
+        }
+      }
     }
   };
   return { state: newState, lines: ["You pull the wrong book from the shelf. Behind it, in a hollow, lies a small brass key."] };
