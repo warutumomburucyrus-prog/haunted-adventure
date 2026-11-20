@@ -1,0 +1,294 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add six boolean facts to `INITIAL_STATE`": [
+      {
+        "executionId": "38adeb5a-12bd-4157-a733-3c95f98edb0a",
+        "chatSessionId": "sess_24776922-cb83-459a-9345-65f3e010b8f0",
+        "timestamp": 1795166838861
+      },
+      {
+        "executionId": "38adeb5a-12bd-4157-a733-3c95f98edb0a",
+        "chatSessionId": "sess_24776922-cb83-459a-9345-65f3e010b8f0",
+        "timestamp": 1795166872081
+      }
+    ],
+    "1. Add the new state facts": [
+      {
+        "executionId": "38adeb5a-12bd-4157-a733-3c95f98edb0a",
+        "chatSessionId": "sess_24776922-cb83-459a-9345-65f3e010b8f0",
+        "timestamp": 1795166872131
+      }
+    ],
+    "2.1 Rewrite `get`, `grab` and `pick up` to `take` in `normalizeCommand`": [
+      {
+        "executionId": "d3fa12ac-eae5-4c5d-abd7-5a9259cef592",
+        "chatSessionId": "sess_29de5a42-3a54-48c4-9ad2-c473d0d507be",
+        "timestamp": 1795166895200
+      },
+      {
+        "executionId": "d3fa12ac-eae5-4c5d-abd7-5a9259cef592",
+        "chatSessionId": "sess_29de5a42-3a54-48c4-9ad2-c473d0d507be",
+        "timestamp": 1795166992427
+      }
+    ],
+    "2.2 Add the new synonyms to the `synonyms` list": [
+      {
+        "executionId": "26fd9c4f-43c4-4b77-a5dc-60e2228ea694",
+        "chatSessionId": "sess_e5c06eca-beb9-426e-a1df-66f507e72165",
+        "timestamp": 1795167113031
+      },
+      {
+        "executionId": "26fd9c4f-43c4-4b77-a5dc-60e2228ea694",
+        "chatSessionId": "sess_e5c06eca-beb9-426e-a1df-66f507e72165",
+        "timestamp": 1795167173226
+      }
+    ],
+    "2. Update command normalizing": [
+      {
+        "executionId": "26fd9c4f-43c4-4b77-a5dc-60e2228ea694",
+        "chatSessionId": "sess_e5c06eca-beb9-426e-a1df-66f507e72165",
+        "timestamp": 1795167173291
+      }
+    ],
+    "3.1 Add the lamp text and `getLampText`": [
+      {
+        "executionId": "bef9709d-6ff1-411c-ab6e-93a10b07c2b6",
+        "chatSessionId": "sess_ebf24f17-4056-4e49-87ed-5722942c1493",
+        "timestamp": 1795167293241
+      },
+      {
+        "executionId": "bef9709d-6ff1-411c-ab6e-93a10b07c2b6",
+        "chatSessionId": "sess_ebf24f17-4056-4e49-87ed-5722942c1493",
+        "timestamp": 1795167329167
+      }
+    ],
+    "3.2 Use `getLampText` in `handleExamine`": [
+      {
+        "executionId": "0dcee9c4-fa1a-4a72-9f36-89af535fac78",
+        "chatSessionId": "sess_1fc07aca-346b-4b82-a130-34ae5d30dfed",
+        "timestamp": 1795167587309
+      },
+      {
+        "executionId": "0dcee9c4-fa1a-4a72-9f36-89af535fac78",
+        "chatSessionId": "sess_1fc07aca-346b-4b82-a130-34ae5d30dfed",
+        "timestamp": 1795167626234
+      }
+    ],
+    "3.3 Add `handleFillLamp` and its `runCommand` branch": [
+      {
+        "executionId": "249a8878-471d-4b45-af3b-114bf40671da",
+        "chatSessionId": "sess_4d46976e-df7e-4432-bd50-686f1493e5f8",
+        "timestamp": 1795167721443
+      },
+      {
+        "executionId": "249a8878-471d-4b45-af3b-114bf40671da",
+        "chatSessionId": "sess_4d46976e-df7e-4432-bd50-686f1493e5f8",
+        "timestamp": 1795167760790
+      }
+    ],
+    "3.4 Add `handleLightLamp` and its `runCommand` branch": [
+      {
+        "executionId": "046f9d02-c8b4-46b9-a9c2-2802c4591f00",
+        "chatSessionId": "sess_9886b09a-0073-4535-ac16-59b3ac4629ee",
+        "timestamp": 1795167851570
+      },
+      {
+        "executionId": "046f9d02-c8b4-46b9-a9c2-2802c4591f00",
+        "chatSessionId": "sess_9886b09a-0073-4535-ac16-59b3ac4629ee",
+        "timestamp": 1795167909702
+      }
+    ],
+    "3. Add the lamp commands": [
+      {
+        "executionId": "046f9d02-c8b4-46b9-a9c2-2802c4591f00",
+        "chatSessionId": "sess_9886b09a-0073-4535-ac16-59b3ac4629ee",
+        "timestamp": 1795167909830
+      }
+    ],
+    "4.1 Add the lock check to `handleGo`": [
+      {
+        "executionId": "1eb00f05-aee4-4bec-b4a8-ea091b9a5ebe",
+        "chatSessionId": "sess_38c08538-c73f-4b4c-bcb4-ea4f2bb0a9db",
+        "timestamp": 1795168068497
+      },
+      {
+        "executionId": "1eb00f05-aee4-4bec-b4a8-ea091b9a5ebe",
+        "chatSessionId": "sess_38c08538-c73f-4b4c-bcb4-ea4f2bb0a9db",
+        "timestamp": 1795168140200
+      }
+    ],
+    "4.2 Add the Kitchen room and connect it to the Hallway": [
+      {
+        "executionId": "28262390-67db-4b33-acee-8e8a644089ff",
+        "chatSessionId": "sess_c813a8c4-294f-471d-816e-56a4d4fa13a5",
+        "timestamp": 1795168205943
+      },
+      {
+        "executionId": "28262390-67db-4b33-acee-8e8a644089ff",
+        "chatSessionId": "sess_c813a8c4-294f-471d-816e-56a4d4fa13a5",
+        "timestamp": 1795168468295
+      }
+    ],
+    "4.3 Add the Storeroom room": [
+      {
+        "executionId": "230bf6de-f6bf-4e0c-a39d-1cabfdd0c246",
+        "chatSessionId": "sess_6060478d-fa09-48d2-9d69-05cb3785a82d",
+        "timestamp": 1795168753031
+      },
+      {
+        "executionId": "230bf6de-f6bf-4e0c-a39d-1cabfdd0c246",
+        "chatSessionId": "sess_6060478d-fa09-48d2-9d69-05cb3785a82d",
+        "timestamp": 1795168988284
+      }
+    ],
+    "4. Add the locked-door rule and the new rooms": [
+      {
+        "executionId": "230bf6de-f6bf-4e0c-a39d-1cabfdd0c246",
+        "chatSessionId": "sess_6060478d-fa09-48d2-9d69-05cb3785a82d",
+        "timestamp": 1795168988344
+      }
+    ],
+    "5. Checkpoint - Check the lamp and the doors": [
+      {
+        "executionId": "cabdd790-3f02-483c-aa30-e779543c962d",
+        "chatSessionId": "sess_329e0f39-a668-4659-a947-bdd0660cbc7f",
+        "timestamp": 1795169007629
+      },
+      {
+        "executionId": "cabdd790-3f02-483c-aa30-e779543c962d",
+        "chatSessionId": "sess_329e0f39-a668-4659-a947-bdd0660cbc7f",
+        "timestamp": 1795169333780
+      }
+    ],
+    "6.1 Add the item names, key helper and `takeItem`": [
+      {
+        "executionId": "a64fe56c-cd7d-4c22-87ce-76bc7fb7eecf",
+        "chatSessionId": "sess_1881b096-f22f-48c6-a0b3-e36e2a1ca946",
+        "timestamp": 1795169365522
+      },
+      {
+        "executionId": "a64fe56c-cd7d-4c22-87ce-76bc7fb7eecf",
+        "chatSessionId": "sess_1881b096-f22f-48c6-a0b3-e36e2a1ca946",
+        "timestamp": 1795169422783
+      }
+    ],
+    "6.2 Rewrite `handleTakeKey` to use `findRoomKey`": [
+      {
+        "executionId": "08b72c79-423c-4988-b271-55c71782ff00",
+        "chatSessionId": "sess_75de3c0f-ce14-4a4b-a1cb-a265be49c0d5",
+        "timestamp": 1795169463815
+      },
+      {
+        "executionId": "08b72c79-423c-4988-b271-55c71782ff00",
+        "chatSessionId": "sess_75de3c0f-ce14-4a4b-a1cb-a265be49c0d5",
+        "timestamp": 1795169515039
+      }
+    ],
+    "6.3 Add `handleTake` and its `runCommand` branch": [
+      {
+        "executionId": "d6b6824a-4f37-4f79-a42a-8351bc0b2b1c",
+        "chatSessionId": "sess_703bb0d2-4ec0-46e6-8f71-6707e1a67107",
+        "timestamp": 1795169582696
+      },
+      {
+        "executionId": "d6b6824a-4f37-4f79-a42a-8351bc0b2b1c",
+        "chatSessionId": "sess_703bb0d2-4ec0-46e6-8f71-6707e1a67107",
+        "timestamp": 1795169640281
+      }
+    ],
+    "6.4 Add item text for the keys and the lighter": [
+      {
+        "executionId": "50439dfc-c14a-4b5e-9f74-0e7d24fb2864",
+        "chatSessionId": "sess_d886667d-be65-43d6-b206-e8b5e937e00e",
+        "timestamp": 1795169662619
+      },
+      {
+        "executionId": "50439dfc-c14a-4b5e-9f74-0e7d24fb2864",
+        "chatSessionId": "sess_d886667d-be65-43d6-b206-e8b5e937e00e",
+        "timestamp": 1795169727789
+      }
+    ],
+    "6. Add the generic take command": [
+      {
+        "executionId": "50439dfc-c14a-4b5e-9f74-0e7d24fb2864",
+        "chatSessionId": "sess_d886667d-be65-43d6-b206-e8b5e937e00e",
+        "timestamp": 1795169727851
+      }
+    ],
+    "7.1 Add `handleOpenDrawer` and its `runCommand` branch": [
+      {
+        "executionId": "d2bb05f0-8d08-4d61-b1d3-ebdbc6673207",
+        "chatSessionId": "sess_b18ce9b6-f58e-40da-83f9-959eec1318ce",
+        "timestamp": 1795169771346
+      },
+      {
+        "executionId": "d2bb05f0-8d08-4d61-b1d3-ebdbc6673207",
+        "chatSessionId": "sess_b18ce9b6-f58e-40da-83f9-959eec1318ce",
+        "timestamp": 1795169857896
+      }
+    ],
+    "7.2 Change the Library shelves text": [
+      {
+        "executionId": "80fdbe40-7893-4e21-8c43-88ff53914c06",
+        "chatSessionId": "sess_2e82c354-bb82-4267-a052-9f88f5597b8e",
+        "timestamp": 1795169915775
+      },
+      {
+        "executionId": "80fdbe40-7893-4e21-8c43-88ff53914c06",
+        "chatSessionId": "sess_2e82c354-bb82-4267-a052-9f88f5597b8e",
+        "timestamp": 1795169946407
+      }
+    ],
+    "7.3 Add `handleOpenBook` and its `runCommand` branch": [
+      {
+        "executionId": "f8b6d9d7-7fd1-4f09-9161-2aa62402823d",
+        "chatSessionId": "sess_90512a68-7073-4dd0-81d2-c813782c2e8e",
+        "timestamp": 1795169997246
+      },
+      {
+        "executionId": "f8b6d9d7-7fd1-4f09-9161-2aa62402823d",
+        "chatSessionId": "sess_90512a68-7073-4dd0-81d2-c813782c2e8e",
+        "timestamp": 1795170077891
+      }
+    ],
+    "7. Add the drawer and the book": [
+      {
+        "executionId": "f8b6d9d7-7fd1-4f09-9161-2aa62402823d",
+        "chatSessionId": "sess_90512a68-7073-4dd0-81d2-c813782c2e8e",
+        "timestamp": 1795170078006
+      }
+    ],
+    "8.1 Require a lit lamp for `needsLight` rooms in `handleGo`": [
+      {
+        "executionId": "06d5c21a-edce-46fd-bd62-8a1f8072055b",
+        "chatSessionId": "sess_085735ea-79d3-41a2-a0e2-30c10e0904a5",
+        "timestamp": 1795170129854
+      },
+      {
+        "executionId": "06d5c21a-edce-46fd-bd62-8a1f8072055b",
+        "chatSessionId": "sess_085735ea-79d3-41a2-a0e2-30c10e0904a5",
+        "timestamp": 1795170163879
+      }
+    ],
+    "8. Add the Cellar light rule": [
+      {
+        "executionId": "06d5c21a-edce-46fd-bd62-8a1f8072055b",
+        "chatSessionId": "sess_085735ea-79d3-41a2-a0e2-30c10e0904a5",
+        "timestamp": 1795170163930
+      }
+    ],
+    "9. Final checkpoint - Walk through the game": [
+      {
+        "executionId": "7ed24cb3-75a5-427a-b6f5-b808b0f29bb2",
+        "chatSessionId": "sess_9cd8b7ad-5454-4b9d-87a9-310883b94bb5",
+        "timestamp": 1795170692431
+      },
+      {
+        "executionId": "7ed24cb3-75a5-427a-b6f5-b808b0f29bb2",
+        "chatSessionId": "sess_9cd8b7ad-5454-4b9d-87a9-310883b94bb5",
+        "timestamp": 1795174008183
+      }
+    ]
+  }
+}
