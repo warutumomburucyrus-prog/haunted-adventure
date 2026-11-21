@@ -1028,11 +1028,25 @@ function isStepDoneOwn(state, step) {
   }
 }
 
-// isStepDone says if an escape step (1 to 14) is done. A step also counts
-// as done when any later step is done, so a player who skips ahead never
-// gets a stale hint.
+// isStepDone says if an escape step (1 to 14) is done. A step is done by its
+// own facts. It is also done through a later step, but only when that later
+// step cannot happen without it, so a player who skips ahead never gets a
+// stale hint:
+//   - Steps 1 and 2: only their own facts.
+//   - Step 3 is optional: any step from 4 onward makes it done.
+//   - Steps 4 to 9: a later step from 5 to 9, or any step from 11 onward.
+//     Step 10 never counts, because the rug can be pulled at any time.
+//   - Step 10 and later: any step from 11 onward.
 function isStepDone(state, step) {
-  for (let later = step; later < STEP_COUNT; later++) {
+  if (isStepDoneOwn(state, step)) return true;
+  if (step <= 2) return false;
+
+  // Check each later step that proves this one was done.
+  for (let later = step + 1; later < STEP_COUNT; later++) {
+    // Steps 4 to 9 are not proven by step 10 (the rug).
+    if (step >= 4 && step <= 9 && later === 10) continue;
+    // Steps 10 and later are only proven by steps 11 and later.
+    if (step >= 10 && later < 11) continue;
     if (isStepDoneOwn(state, later)) return true;
   }
   return false;
