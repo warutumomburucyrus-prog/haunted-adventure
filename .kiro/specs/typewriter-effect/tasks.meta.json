@@ -1,0 +1,266 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add the four named constants at the top of `game.js`": [
+      {
+        "executionId": "b01d45fe-1749-45ca-9ee3-f7142bac2002",
+        "chatSessionId": "sess_7a01055b-0647-47a8-a99f-ed99213209be",
+        "timestamp": 1795268364808
+      },
+      {
+        "executionId": "b01d45fe-1749-45ca-9ee3-f7142bac2002",
+        "chatSessionId": "sess_7a01055b-0647-47a8-a99f-ed99213209be",
+        "timestamp": 1795268390487
+      }
+    ],
+    "1.2 Add the typing variables to `game.js`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407329
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268444941
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268486317
+      }
+    ],
+    "1.3 Add the hidden-prompt rule to `style.css`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407382
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268413506
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268438412
+      }
+    ],
+    "2.1 Move the scroll line of `renderOutput` into `scrollToPrompt()`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407429
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268494830
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268656367
+      }
+    ],
+    "2.2 Add `typewriterActive()`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407493
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268662195
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268747150
+      }
+    ],
+    "3.1 Add `scrollWhileTyping()`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407540
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268778268
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268922601
+      }
+    ],
+    "3.2 Add `endTyping()`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407932
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268932159
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268968620
+      }
+    ],
+    "3.3 Add `typeNextLine()` and `typeChar(i)`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268407996
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268971662
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269004188
+      }
+    ],
+    "3.4 Add `startTyping(lines)` and `showLines(lines)`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268408042
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269007157
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269032576
+      }
+    ],
+    "3.5 Add `skipTyping()`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268408092
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269037113
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269063825
+      }
+    ],
+    "4.1 Change `handleSubmit(event)` in `game.js`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268408137
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269067451
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269103893
+      }
+    ],
+    "4.2 Change `init()` to type the intro": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268408178
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269107456
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269128595
+      }
+    ],
+    "4.3 Add the event listeners in `init()`": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268408218
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269132017
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269159613
+      }
+    ],
+    "5. Final checkpoint": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268408260
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269162736
+      },
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269392916
+      }
+    ],
+    "1. Add the settings, the typing variables and the prompt style": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268486368
+      }
+    ],
+    "2. Add the small helper functions": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795268747200
+      }
+    ],
+    "3. Build the typing engine": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269063882
+      }
+    ],
+    "4. Wire the effect into the page": [
+      {
+        "executionId": "8a0a466e-92c5-42b6-8c7d-523e110fc263",
+        "chatSessionId": "sess_1d8cfce3-7c50-4be6-8e31-877736f1ec44",
+        "timestamp": 1795269159667
+      }
+    ]
+  }
+}

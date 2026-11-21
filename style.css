@@ -35,6 +35,11 @@ body {
   padding: 0;
 }
 
+/* While text is typing, hide the prompt but keep its space and focus. */
+#command-form.typing {
+  opacity: 0;
+}
+
 #prompt {
   margin-right: 10px;
 }

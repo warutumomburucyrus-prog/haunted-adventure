@@ -1,6 +1,39 @@
 // Haunted Adventure game engine.
 // This file holds the game state and the command logic.
 
+// ---- Typewriter settings ----
+// These numbers control how the text is typed on screen. They only change looks.
+
+// Turn the typewriter effect on (true) or off (false).
+const TYPEWRITER_ENABLED = true;
+
+// Delay between two typed characters, in milliseconds.
+const TYPE_DELAY_MS = 60;
+
+// Extra pause after a full stop, comma or question mark, in milliseconds.
+const PUNCTUATION_PAUSE_MS = 300;
+
+// Pause between the end of one line and the start of the next, in milliseconds.
+const LINE_PAUSE_MS = 150;
+
+// ---- Typewriter variables ----
+// These hold presentation facts only (what is being typed). Never game facts.
+
+// True while text is being typed on screen.
+let typing = false;
+
+// The id of the pending typing timer, or null when none is waiting.
+let typingTimer = null;
+
+// The lines still waiting to be typed, after the current one.
+let typingQueue = [];
+
+// The output div of the line being typed now, or null.
+let typingDiv = null;
+
+// The full text of the line being typed now.
+let typingText = "";
+
 // ---- Fear constants ----
 // These numbers and texts control the fear meter. Only game code uses them.
 
@@ -227,7 +260,8 @@ const INTRO = [
   "the door stood open, so you stepped inside to wait out the rain,",
   "then it slammed shut behind you, and the lock turned on its own,",
   "somewhere above you, something begins to walk...",
-  "(Type 'help' if you lose your way, or 'hint' if you are confused)"
+  "(Type 'help' if you lose your way, or 'hint' if you are confused)",
+  "(Tap or press 'Enter' to skip)"
 ];
 
 const DIRECTIONS = ["north", "south", "east", "west", "up", "down"];
@@ -444,9 +478,88 @@ function renderOutput(lines) {
     lineDiv.textContent = line;
     output.insertBefore(lineDiv, document.getElementById("command-form"));
   }
-  // Scroll the output box (not the whole page) so the prompt sits mid-screen.
+  scrollToPrompt();
+}
+
+// scrollToPrompt scrolls the output box (not the whole page)
+// so the prompt sits mid-screen.
+function scrollToPrompt() {
+  const output = document.getElementById("output");
   const form = document.getElementById("command-form");
   output.scrollTop = form.offsetTop - output.clientHeight / 2;
+}
+
+// typewriterActive says whether text should be typed out right now.
+// It returns false when the effect is off, the player prefers reduced
+// motion, or a delay setting is not a number from 0 to 5000.
+function typewriterActive() {
+  // Switched off in the settings.
+  if (!TYPEWRITER_ENABLED) {
+    return false;
+  }
+  // Reduced motion is read on every call, so a changed setting counts.
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return false;
+  }
+  // Every delay must be a finite number from 0 to 5000.
+  const delays = [TYPE_DELAY_MS, PUNCTUATION_PAUSE_MS, LINE_PAUSE_MS];
+  for (const d of delays) {
+    if (typeof d !== "number" || !Number.isFinite(d) || d < 0 || d > 5000) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// scrollWhileTyping keeps the line being typed in view, near mid-screen.
+// It never scrolls above the top of the output box.
+function scrollWhileTyping() {
+  const output = document.getElementById("output");
+  output.scrollTop = Math.max(0, typingDiv.offsetTop + typingDiv.offsetHeight - output.clientHeight / 2);
+}
+
+// typeNextLine takes the next line from the queue. Blank lines appear at
+// once. A text line gets an empty div, then typeChar fills it in.
+function typeNextLine() {
+  const output = document.getElementById("output");
+  const form = document.getElementById("command-form");
+  while (typingQueue.length > 0) {
+    const line = typingQueue.shift();
+    const lineDiv = document.createElement("div");
+    // Same way renderOutput builds a line.
+    output.insertBefore(lineDiv, form);
+    if (line.trim() === "") {
+      // Blank line: show it now, no delay, and go on to the next one.
+      lineDiv.textContent = line;
+      continue;
+    }
+    typingDiv = lineDiv;
+    typingText = line;
+    typeChar(0);
+    return;
+  }
+  // Nothing left to type.
+  endTyping();
+}
+
+// typeChar shows the first i + 1 characters of the current line, then
+// waits and schedules the next step.
+function typeChar(i) {
+  typingDiv.textContent = typingText.slice(0, i + 1);
+  scrollWhileTyping();
+  const isLast = (i === typingText.length - 1);
+  if (!isLast) {
+    // Punctuation gets a longer pause than other characters.
+    const pause = ".,?".includes(typingText.charAt(i)) ? PUNCTUATION_PAUSE_MS : TYPE_DELAY_MS;
+    typingTimer = setTimeout(() => typeChar(i + 1), pause);
+  } else if (typingQueue.length > 0) {
+    // Line done and more follow: pause, then start the next one.
+    typingTimer = setTimeout(typeNextLine, LINE_PAUSE_MS);
+  } else {
+    // Last character of the last line: show the prompt at once.
+    typingTimer = null;
+    endTyping();
+  }
 }
 
 // showTyped draws what the player has typed, with the underscore cursor
@@ -458,6 +571,57 @@ function showTyped() {
   document.getElementById("typed").textContent = text.slice(0, pos);
   document.getElementById("cursor").textContent = text.charAt(pos) || "\u00A0";
   document.getElementById("typed-after").textContent = text.slice(pos + 1);
+}
+
+// endTyping finishes a typing session: shows the prompt again, clears
+// anything typed meanwhile, and puts the caret back in the input.
+function endTyping() {
+  typing = false;
+  const input = document.getElementById("command-input");
+  document.getElementById("command-form").classList.remove("typing");
+  input.value = "";
+  showTyped();
+  if (document.activeElement !== input) {
+    input.focus();
+  }
+  scrollToPrompt();
+}
+
+// skipTyping shows all the remaining text at once and ends typing.
+// It changes only what is on screen, never the game state.
+function skipTyping() {
+  // Stop the pending timer.
+  clearTimeout(typingTimer);
+  typingTimer = null;
+  // Finish the line being typed.
+  if (typingDiv) {
+    typingDiv.textContent = typingText;
+  }
+  // Show every queued line now, and empty the queue.
+  const rest = typingQueue;
+  typingQueue = [];
+  renderOutput(rest);
+  endTyping();
+}
+
+// startTyping begins typing a list of lines on screen.
+function startTyping(lines) {
+  typing = true;
+  // Hide the prompt while text is being typed.
+  document.getElementById("command-form").classList.add("typing");
+  // Copy the lines so the caller's array is not changed.
+  typingQueue = [...lines];
+  typeNextLine();
+}
+
+// showLines types the lines when the effect is on and some line has
+// text. Otherwise it shows them at once.
+function showLines(lines) {
+  if (!typewriterActive() || !lines.some((line) => line.trim() !== "")) {
+    renderOutput(lines);
+  } else {
+    startTyping(lines);
+  }
 }
 
 // handleUnknown is used when the player types something that is not a
@@ -1333,6 +1497,11 @@ function updateStatusBar(state) {
 // (Requirement 3.2)
 function handleSubmit(event) {
   event.preventDefault();
+  // While text is typing, a submit only skips the typing. No command runs.
+  if (typing) {
+    skipTyping();
+    return;
+  }
   const input = document.getElementById("command-input");
   const text = input.value;
   // Show what the player typed, with a ">>" in front, like a command prompt.
@@ -1344,14 +1513,18 @@ function handleSubmit(event) {
   const result = processCommand(gameState, text);
   gameState = result.state;
   updateStatusBar(gameState);
-  renderOutput(result.lines);
-  // Leave a blank line after the reply, before the next prompt.
+  // Show the reply, with a blank line after it before the next prompt.
+  const replyLines = [...result.lines];
   if (result.lines.length > 0) {
-    renderOutput(["\u00A0"]);
+    replyLines.push("\u00A0");
   }
-  input.value = "";
-  showTyped();
-  input.focus();
+  showLines(replyLines);
+  // If typing started, endTyping clears and focuses the input later.
+  if (!typing) {
+    input.value = "";
+    showTyped();
+    input.focus();
+  }
 }
 
 // init sets up the game when the page loads. It resets the state to the
@@ -1361,7 +1534,8 @@ function handleSubmit(event) {
 function init() {
   gameState = INITIAL_STATE;
   updateStatusBar(gameState);
-  renderOutput([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
+  // Type the intro and then the opening room, in order.
+  showLines([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
   const form = document.getElementById("command-form");
   form.addEventListener("submit", handleSubmit);
   document.getElementById("command-input").focus();
@@ -1372,6 +1546,38 @@ function init() {
   }
   // On keydown the caret has not moved yet, so check again a moment later.
   typingBox.addEventListener("keydown", () => setTimeout(showTyped, 0));
+
+  // While typing: Enter or Space skips. Letters, Backspace, Delete and Tab
+  // are blocked. Other keys (F5, F12, Escape, arrows) are left alone.
+  typingBox.addEventListener("keydown", (event) => {
+    if (!typing) return;
+    // Never block browser shortcuts such as Ctrl+R.
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+    const key = event.key;
+    if (key === "Enter" || key === " ") {
+      event.preventDefault(); // no submit, no space typed
+      skipTyping();
+    } else if (key.length === 1 || key === "Backspace" || key === "Delete" || key === "Tab") {
+      event.preventDefault(); // nothing is added or removed
+    }
+  });
+
+  // While typing: if text still gets in (paste, phone keyboard), clear it.
+  typingBox.addEventListener("input", () => {
+    if (typing) {
+      typingBox.value = "";
+      showTyped();
+    }
+  });
+
+  // While typing: a click on the output skips, and focus stays in the input.
+  const outputBox = document.getElementById("output");
+  outputBox.addEventListener("mousedown", (event) => {
+    if (typing) event.preventDefault();
+  });
+  outputBox.addEventListener("click", () => {
+    if (typing) skipTyping();
+  });
   showTyped();
 }
 
