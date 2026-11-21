@@ -380,7 +380,10 @@ function normalizeCommand(rawInput) {
 
   // Turn a leading "get", "grab" or "pick up" into "take".
   // A lone "get" becomes "take", so "Take what?" still works.
-  text = text.replace(/^(get|grab|pick up)(\s+|$)/, "take ").trim();
+  text = text.replace(/^(get|grab|pick up|carry off|carry)(\s+|$)/, "take ").trim();
+
+  // "go to kitchen" and "enter kitchen" both become "go kitchen".
+  text = text.replace(/^(go to|go into|enter)\s+/, "go ").trim();
 
   // Other ways of saying a command, mapped to the standard one.
   const synonyms = {
@@ -411,7 +414,20 @@ function normalizeCommand(rawInput) {
     // Ways of asking for a hint.
     "hint": "hint",
     "hints": "hint",
-    "help me": "hint"
+    "help me": "hint",
+    // Words the hints use, so following a hint always works.
+    "pour oil": "fill lamp", "pour oil into lamp": "fill lamp", "pour oil in lamp": "fill lamp",
+    "use oil can": "fill lamp", "use oil": "fill lamp",
+    "use lighter": "light lamp", "use lighter on lamp": "light lamp",
+    "light wick": "light lamp", "ignite lamp": "light lamp",
+    "turn key": "unlock door", "turn brass key": "unlock door", "turn rusty key": "unlock door",
+    "use brass key": "unlock door", "use rusty key": "unlock door",
+    "unlock narrow door": "unlock door", "unlock far door": "unlock door",
+    "open narrow door": "unlock door", "open far door": "unlock door",
+    "look in drawer": "open drawer", "look inside drawer": "open drawer",
+    "open odd book": "open book", "pull odd book": "open book",
+    "lift key": "take key", "lift brass key": "take brass key",
+    "lift small brass key": "take small brass key",
   };
 
   // Use the standard command if the text is in the list, else keep it.
@@ -614,8 +630,7 @@ function handleExamine(state, noun) {
     floor: "dust", floorboards: "dust", cobwebs: "dust", webs: "dust",
     moonlight: "shutters",
     "small brass key": "brass key",
-    drawers: "drawer",
-    book: "shelves"
+    drawers: "drawer"
   };
 
   // Examining the room itself is the same as looking around.
@@ -1154,14 +1169,20 @@ function runCommand(state, rawInput) {
     return handleLook(state);
   }
 
-  // go <direction>: move through an exit if there is one. (Requirement 5.1)
+  // go <direction>, or go <name of a room next door>.
   if (command.startsWith("go ")) {
-    const direction = command.slice(3);
-    if (DIRECTIONS.includes(direction)) {
-      return handleGo(state, direction);
+    const where = command.slice(3);
+    if (DIRECTIONS.includes(where)) {
+      return handleGo(state, where);
+    }
+    // "go kitchen": find the exit that leads to a room with that name.
+    const here = state.rooms[state.currentRoomId];
+    for (const dir in here.exits) {
+      if (state.rooms[here.exits[dir]].name.toLowerCase() === where) {
+        return handleGo(state, dir);
+      }
     }
   }
-
   // take lamp: pick up the lamp if it is in the room. (Requirements 6.1, 6.2)
   if (command === "take lamp") {
     return handleTakeLamp(state);
