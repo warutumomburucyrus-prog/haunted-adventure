@@ -85,4 +85,45 @@ body {
   padding: 6px 16px;
   display: flex;
   justify-content: space-between;
+  align-items: center;       /* keep title and room text centered next to the taller button */
+}
+
+/* Boot screen lines are green, like the rest of the terminal text. */
+.boot-line {
+  color: #33ff66;
+}
+
+/* Sound toggle: a plain button styled to fit the green status bar. */
+#sound-toggle {
+  font-family: monospace;
+  font-size: 18px;
+  color: #0a0a0a;            /* dark text, readable on the green bar */
+  background: transparent;   /* let the green bar show through */
+  border: 2px solid #0a0a0a;
+  min-width: 44px;           /* tap area at least 44 x 44 px */
+  min-height: 44px;
+  cursor: pointer;
+}
+
+/* Visible outline when the button is reached with the Tab key. */
+#sound-toggle:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 2px;
+}
+
+/* Keep the room and fear text next to the sound button, at the right end. */
+#status-info {
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+@media (max-width: 600px) {
+  #status-bar {
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+
+  #sound-toggle {
+    font-size: 14px;
+  }
 }

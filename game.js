@@ -34,6 +34,177 @@ let typingDiv = null;
 // The full text of the line being typed now.
 let typingText = "";
 
+// ---- Sound settings ----
+// These control the sound effects. They only change what the player hears.
+
+// Master switch for all sound. Set to false to turn sound off completely.
+const SOUND_ENABLED = true;
+
+// How loud sounds are, from 0 (silent) to 1 (full volume).
+const SOUND_VOLUME = 0.35;
+
+// The shortest time allowed between two sounds, in milliseconds.
+const SOUND_MIN_GAP_MS = 25;
+
+// The key used to save the player's sound choice in the browser.
+const SOUND_STORAGE_KEY = "haunted-sound";
+
+// The time to type all the boot screen lines, in milliseconds.
+const BOOT_TOTAL_MS = 1800;
+
+// ---- Sound variables ----
+// These hold presentation facts only. Never game facts.
+
+// True while the player has sound switched on.
+let soundEnabled = SOUND_ENABLED;
+
+// The browser audio object. It stays null until the first sound is made.
+let audioCtx = null;
+
+// The time of the last sound played. -Infinity means none yet.
+let lastSoundTime = -Infinity;
+
+// The length of the typed command the last time we checked it.
+let lastInputLength = 0;
+
+// Which part of the start screen we are in. "done" means the game is running.
+// It starts as "typing" so no command runs during the boot screen.
+let bootPhase = "typing";
+
+// The boot screen lines. They are built when the boot screen starts.
+let bootLines = [];
+
+// The output div of each boot line.
+let bootDivs = [];
+
+// The id of the pending boot typing timer, or null.
+let bootTimer = null;
+
+// Where boot typing is now: which line, and how many characters of it are shown.
+let bootLineIndex = 0;
+let bootCharCount = 0;
+
+// The delay between two boot characters, in milliseconds.
+let bootDelay = 0;
+
+// ---- Sound engine ----
+// These functions only make noise. They never read or change the game state.
+
+// Creates the browser audio object, but only if sound is on and none exists.
+function ensureAudio() {
+  if (!soundEnabled || audioCtx) return;
+  try {
+    const AudioClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioClass) return; // This browser has no Web Audio.
+    audioCtx = new AudioClass();
+  } catch (error) {
+    audioCtx = null; // Sound just stays off.
+  }
+}
+
+// Reads the saved sound choice. Returns true for "on", false for "off",
+// and the SOUND_ENABLED default for anything else (or if storage fails).
+function loadSoundChoice() {
+  try {
+    const saved = localStorage.getItem(SOUND_STORAGE_KEY);
+    if (saved === "on") return true;
+    if (saved === "off") return false;
+  } catch (error) {
+    // Storage may be blocked. Use the default.
+  }
+  return SOUND_ENABLED;
+}
+
+// Saves the current sound choice as "on" or "off". Ignores any failure.
+function saveSoundChoice() {
+  try {
+    localStorage.setItem(SOUND_STORAGE_KEY, soundEnabled ? "on" : "off");
+  } catch (error) {
+    // Storage may be blocked. The choice just won't be remembered.
+  }
+}
+
+// Shows the current sound choice on the #sound-toggle button.
+function updateSoundToggle() {
+  const button = document.getElementById("sound-toggle");
+  if (button) {
+    button.textContent = soundEnabled ? "SOUND: ON" : "SOUND: OFF";
+  }
+}
+
+// Turns sound on or off, remembers the choice, and updates the button.
+function setSound(on) {
+  soundEnabled = !!on;
+  saveSoundChoice();
+  updateSoundToggle();
+  if (soundEnabled) ensureAudio(); // Create the audio object when turning on.
+}
+
+// Plays one short beep. Does nothing quietly if anything is not right.
+function playSound(wave, pitch, seconds, baseLoudness) {
+  try {
+    if (!soundEnabled) return;
+    // The volume must be a real number from 0 to 1.
+    if (typeof SOUND_VOLUME !== "number" || !isFinite(SOUND_VOLUME) ||
+        SOUND_VOLUME < 0 || SOUND_VOLUME > 1) return;
+    if (!audioCtx) return;
+    // Skip sounds that come too soon after the last one.
+    const now = performance.now();
+    if (now - lastSoundTime < SOUND_MIN_GAP_MS) return;
+
+    // Wake the audio up if the browser paused it. Ignore any failure.
+    if (audioCtx.state === "suspended") {
+      try {
+        const result = audioCtx.resume();
+        if (result && result.catch) result.catch(function () {});
+      } catch (error) {
+        // Ignore.
+      }
+    }
+
+    // Wire up: oscillator (the tone) -> gain (the loudness) -> speakers.
+    const start = audioCtx.currentTime;
+    const oscillator = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    oscillator.type = wave;
+    oscillator.frequency.setValueAtTime(pitch, start);
+    gain.gain.setValueAtTime(SOUND_VOLUME * baseLoudness, start);
+    // Fade to nearly silent so the beep ends smoothly.
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + seconds);
+    oscillator.connect(gain);
+    gain.connect(audioCtx.destination);
+    oscillator.start(start);
+    oscillator.stop(start + seconds);
+    lastSoundTime = now;
+  } catch (error) {
+    // Sound must never break the game.
+  }
+}
+
+// Soft tick for one typed letter. Spaces stay silent.
+// Pitch and loudness vary a little so it sounds less robotic.
+function playTick(char) {
+  if (char === " ") return;
+  const pitch = 1500 * (0.9 + Math.random() * 0.2);      // 1500 Hz x 0.9 to 1.1
+  const loudness = 0.25 * (0.8 + Math.random() * 0.4);   // 0.25 x 0.8 to 1.2
+  playSound("triangle", pitch, 0.03, loudness);
+}
+
+// Click for a letter the player types.
+function playKeyClick() {
+  playSound("square", 1200, 0.05, 0.50);
+}
+
+// Softer, lower click for Backspace.
+function playBackspaceClick() {
+  playSound("square", 800, 0.05, 0.35);
+}
+
+// Low, loud clack when a command is sent to the game.
+function playClack() {
+  playSound("square", 300, 0.09, 0.80);
+}
+
 // ---- Fear constants ----
 // These numbers and texts control the fear meter. Only game code uses them.
 
@@ -260,8 +431,7 @@ const INTRO = [
   "the door stood open, so you stepped inside to wait out the rain,",
   "then it slammed shut behind you, and the lock turned on its own,",
   "somewhere above you, something begins to walk...",
-  "(Type 'help' if you lose your way, or 'hint' if you are confused)",
-  "(Tap or press 'Enter' to skip)"
+  "(Type 'help' if you lose your way, or 'hint' if you are confused)"
 ];
 
 const DIRECTIONS = ["north", "south", "east", "west", "up", "down"];
@@ -419,6 +589,10 @@ function normalizeCommand(rawInput) {
   // "go to kitchen" and "enter kitchen" both become "go kitchen".
   text = text.replace(/^(go to|go into|enter)\s+/, "go ").trim();
 
+  // Drop trailing place words, so "take key from book" becomes "take key".
+  // Only for action verbs, so "look in drawer" and "examine" keep their words.
+  text = text.replace(/^(take|lift|pull|open|push|move|drag|fill|light|use|unlock|pour|turn)(\s.*?)\s+(from|off|out of|behind|inside|in|on|into|onto|with|using)\s+.*$/, "$1$2");
+
   // Other ways of saying a command, mapped to the standard one.
   const synonyms = {
     "north": "go north",
@@ -546,6 +720,8 @@ function typeNextLine() {
 // waits and schedules the next step.
 function typeChar(i) {
   typingDiv.textContent = typingText.slice(0, i + 1);
+  // Play a soft tick for the letter that just appeared (spaces stay silent).
+  playTick(typingText.charAt(i));
   scrollWhileTyping();
   const isLast = (i === typingText.length - 1);
   if (!isLast) {
@@ -571,6 +747,8 @@ function showTyped() {
   document.getElementById("typed").textContent = text.slice(0, pos);
   document.getElementById("cursor").textContent = text.charAt(pos) || "\u00A0";
   document.getElementById("typed-after").textContent = text.slice(pos + 1);
+  // Remember the length, so the next key sound knows if text grew or shrank.
+  lastInputLength = input.value.length;
 }
 
 // endTyping finishes a typing session: shows the prompt again, clears
@@ -621,6 +799,116 @@ function showLines(lines) {
     renderOutput(lines);
   } else {
     startTyping(lines);
+  }
+}
+
+// startBoot begins the boot screen: it builds the lines and types them.
+function startBoot() {
+  bootPhase = "typing";
+  // Hide the prompt while the boot screen types.
+  document.getElementById("command-form").classList.add("typing");
+
+  // The sound line depends on whether sound is on right now.
+  const soundLine = soundEnabled
+    ? 'Sound is on. Type "sound off" to turn it off.'
+    : 'Sound is off. Type "sound on" to turn it on.';
+  bootLines = [
+    "HAUNTED ADVENTURE",
+    "SYSTEM READY",
+    soundLine,
+    "Press Enter or tap to skip the typing.",
+    "PRESS ANY KEY"
+  ];
+
+  // One empty div per line, placed above the prompt.
+  const output = document.getElementById("output");
+  const form = document.getElementById("command-form");
+  bootDivs = bootLines.map(() => {
+    const div = document.createElement("div");
+    div.className = "boot-line";
+    output.insertBefore(div, form);
+    return div;
+  });
+
+  // Reduced motion: show everything at once.
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    skipBoot();
+    return;
+  }
+
+  // The same time for every character, so the whole screen takes BOOT_TOTAL_MS.
+  const totalChars = bootLines.join("").length;
+  bootDelay = BOOT_TOTAL_MS / totalChars;
+  bootLineIndex = 0;
+  bootCharCount = 0;
+  typeBootChar();
+}
+
+// typeBootChar adds one character to the current boot line, then waits.
+function typeBootChar() {
+  bootCharCount++;
+  bootDivs[bootLineIndex].textContent = bootLines[bootLineIndex].slice(0, bootCharCount);
+  // Move to the next line when this one is full.
+  if (bootCharCount >= bootLines[bootLineIndex].length) {
+    bootLineIndex++;
+    bootCharCount = 0;
+  }
+  if (bootLineIndex >= bootLines.length) {
+    // All typed: wait for a key.
+    bootTimer = null;
+    bootPhase = "waiting";
+  } else {
+    bootTimer = setTimeout(typeBootChar, bootDelay);
+  }
+}
+
+// skipBoot shows every boot line in full at once and waits for a key.
+function skipBoot() {
+  clearTimeout(bootTimer);
+  bootTimer = null;
+  for (let i = 0; i < bootDivs.length; i++) {
+    bootDivs[i].textContent = bootLines[i];
+  }
+  bootPhase = "waiting";
+}
+
+// finishBoot ends the start screen and starts the game: it types the intro
+// and the opening room, then puts the caret back in the input.
+function finishBoot() {
+  bootPhase = "done";
+  document.getElementById("command-form").classList.remove("typing");
+  // Same call init() uses for the intro.
+  showLines([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
+  document.getElementById("command-input").focus();
+}
+
+// These keys alone do not count as "press any key".
+const BOOT_IGNORED_KEYS = [
+  "Shift", "Control", "Alt", "AltGraph", "Meta", "OS", "CapsLock", "NumLock",
+  "ScrollLock", "Fn", "FnLock", "Hyper", "Super", "Symbol", "SymbolLock",
+  "Tab", "Escape"
+];
+
+// handleBootInput reacts to a key or click during the start screen.
+function handleBootInput(event) {
+  // Once the game runs, do nothing.
+  if (bootPhase === "done") return;
+  // Leave the sound button alone.
+  if (event.target && event.target.closest && event.target.closest("#sound-toggle")) return;
+  if (event.type === "keydown") {
+    // Leave browser shortcuts, modifier keys, Tab, F1-F12 and Escape alone.
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+    if (BOOT_IGNORED_KEYS.includes(event.key)) return;
+    if (/^F([1-9]|1[0-2])$/.test(event.key)) return;
+  }
+  // Any other key or click is used up here, so the page does not see it.
+  event.preventDefault();
+  event.stopPropagation();
+  if (bootPhase === "typing") {
+    skipBoot();           // first press: show all the text
+  } else if (bootPhase === "waiting") {
+    ensureAudio();        // this press allows sound
+    finishBoot();         // second press: start the game
   }
 }
 
@@ -917,6 +1205,10 @@ function handleTakeKey(state) {
   if (state.carriedItems.includes("key")) {
     return { state, lines: ["You already carry the key."] };
   }
+
+  const nudge = hiddenNudge(state, "key");
+  if (nudge) return { state, lines: [nudge] };
+
   // 3. No key anywhere to take.
   return { state, lines: ["There is no key here."] };
 }
@@ -1001,6 +1293,20 @@ function findRoomKey(room) {
   return ROOM_KEY_IDS.find(id => room.items.includes(id));
 }
 
+// hiddenNudge returns a nudge line when the player asks for an item that is
+// hidden in this room but not found yet. It never names the exact command.
+function hiddenNudge(state, itemId) {
+  if (state.currentRoomId === "library" && !state.bookPulled &&
+    (itemId === "key" || itemId === "brass key")) {
+    return "Something is wedged inside the odd book. You would have to open it first.";
+  }
+  if (state.currentRoomId === "kitchen" && !state.drawerOpen &&
+    (itemId === "key" || itemId === "rusty key" || itemId === "lighter")) {
+    return "Something shifts inside the drawer, out of reach. You would have to open it first.";
+  }
+  return null;
+}
+
 // takeItem moves one item from the current room to carriedItems.
 // It builds new objects and arrays, and changes nothing else.
 function takeItem(state, itemId, line) {
@@ -1071,6 +1377,10 @@ function handleTake(state, noun) {
   if (state.rooms[state.currentRoomId].items.includes(itemId)) {
     return takeItem(state, itemId, "You take the " + itemId + ".");
   }
+
+  const nudge = hiddenNudge(state, itemId);
+  if (nudge) return { state, lines: [nudge] };
+
   // Known item, but not here.
   return { state, lines: ["There is no " + itemId + " here."] };
 }
@@ -1490,13 +1800,23 @@ function updateStatusBar(state) {
   }
 }
 
+// getSoundCommand checks if the text is a sound command. It trims, squashes
+// extra spaces and lowercases. Returns "off", "on", or null for anything else.
+function getSoundCommand(text) {
+  const clean = text.trim().replace(/\s+/g, " ").toLowerCase();
+  if (clean === "sound off" || clean === "mute") return "off";
+  if (clean === "sound on" || clean === "unmute") return "on";
+  return null;
+}
+
 // handleSubmit runs when the player submits the command form. It stops
 // the page from reloading, reads the typed text, runs it through
 // processCommand, saves the new state, shows the reply, then clears and
 // refocuses the input so the player can type the next command.
 // (Requirement 3.2)
 function handleSubmit(event) {
-  event.preventDefault();
+  event.preventDefault(); // always stop the page from reloading
+  if (bootPhase !== "done") return; // no commands during the start screen
   // While text is typing, a submit only skips the typing. No command runs.
   if (typing) {
     skipTyping();
@@ -1510,6 +1830,21 @@ function handleSubmit(event) {
     renderOutput([">> " + text]);
     renderOutput(["\u00A0"]);
   }
+  // A sound command only changes the sound. It skips the game and the clack.
+  const soundValue = getSoundCommand(text);
+  if (soundValue !== null) {
+    setSound(soundValue === "on");
+    showLines([soundValue === "on" ? "Sound on." : "Sound off.", "\u00A0"]);
+    // If typing started, endTyping clears and focuses the input later.
+    if (!typing) {
+      input.value = "";
+      showTyped();
+      input.focus();
+    }
+    return;
+  }
+  // A real command was sent: play the clack just before running it.
+  playClack();
   const result = processCommand(gameState, text);
   gameState = result.state;
   updateStatusBar(gameState);
@@ -1533,14 +1868,28 @@ function handleSubmit(event) {
 // (Requirement 2.4)
 function init() {
   gameState = INITIAL_STATE;
+  // Load the saved sound choice and show it on the button.
+  soundEnabled = loadSoundChoice();
+  updateSoundToggle();
   updateStatusBar(gameState);
-  // Type the intro and then the opening room, in order.
-  showLines([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
+  // The intro is typed later by finishBoot, after the start screen.
   const form = document.getElementById("command-form");
   form.addEventListener("submit", handleSubmit);
   document.getElementById("command-input").focus();
   document.addEventListener("click", () => document.getElementById("command-input").focus());
   const typingBox = document.getElementById("command-input");
+
+  // Key sounds. Runs before showTyped, so lastInputLength is still the old length.
+  // No sound while text is being typed on screen or during the start screen.
+  typingBox.addEventListener("input", () => {
+    if (typing || bootPhase !== "done") return;
+    const length = typingBox.value.length;
+    if (length > lastInputLength) {
+      playKeyClick();       // text grew: a letter was typed
+    } else if (length < lastInputLength) {
+      playBackspaceClick(); // text shrank: something was deleted
+    }
+  });
   for (const eventName of ["input", "keyup", "click", "select"]) {
     typingBox.addEventListener(eventName, showTyped);
   }
@@ -1579,6 +1928,32 @@ function init() {
     if (typing) skipTyping();
   });
   showTyped();
+
+  // The sound button flips sound on or off. It prints nothing.
+  document.getElementById("sound-toggle").addEventListener("click", (event) => {
+    setSound(!soundEnabled);
+    // detail 0 means a keyboard press. Stop the click here so the page
+    // does not move focus away from the button.
+    if (event.detail === 0) event.stopPropagation();
+  });
+
+  // Browsers only allow audio after the player does something.
+  // On the first key press or click, create the audio, then remove both.
+  function firstAction() {
+    ensureAudio();
+    document.removeEventListener("keydown", firstAction, true);
+    document.removeEventListener("click", firstAction, true);
+  }
+  document.addEventListener("keydown", firstAction, true);
+  document.addEventListener("click", firstAction, true);
+
+  // Start screen: keys and clicks are caught first (capture phase).
+  document.addEventListener("keydown", handleBootInput, true);
+  document.addEventListener("click", handleBootInput, true);
+
+  // Show the boot screen last, once sound is loaded and listeners exist.
+  // Only init() calls it, so it shows once per page load (not on restart).
+  startBoot();
 }
 
 // Start the game when the page is ready. The document check keeps this
