@@ -1,0 +1,405 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add the \"Start sequence settings\" block to game.js": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339776310
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339790731
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339854988
+      }
+    ],
+    "2.1 Wrap `#output` and add the loading screen in index.html": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777483
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339864715
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339902629
+      }
+    ],
+    "2.2 Add the wrapper and loading screen rules to style.css": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777591
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339906207
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339941533
+      }
+    ],
+    "3.1 Add the start variables and the loading functions to game.js": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777662
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339947018
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340002114
+      }
+    ],
+    "4.1 Add `START_IGNORED_KEYS` and `handleStartInput(event)`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777773
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340029776
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340074966
+      }
+    ],
+    "4.2 Add `enterStart()` and `beginIntro(skipped)` without sound": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777839
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340083451
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340157543
+      }
+    ],
+    "5.1 Turn the loading screen on and replace the old boot calls": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777906
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340168815
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340233914
+      }
+    ],
+    "6.1 Add `startAuto()` and start the autostart timer": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339777961
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340240862
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340296062
+      }
+    ],
+    "7.1 Add the storm variables, `stormPeak`, `makeNoise` and `trackSource`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778062
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340303907
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340362457
+      }
+    ],
+    "7.2 Add `startRain(t0)`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778160
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340372297
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340409141
+      }
+    ],
+    "7.3 Add `scheduleThunder(when, factor, cutoffHz, tailS)`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778227
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340420904
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340514760
+      }
+    ],
+    "7.4 Add `scheduleDoorSlam(when)` and `scheduleLockClick(when)`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778293
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340524232
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340557573
+      }
+    ],
+    "8.1 Add `startStormCue()`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778353
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340561040
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340588249
+      }
+    ],
+    "8.2 Add `stopStormCue(fadeMs)` and `fadeRain(seconds)`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778451
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340592032
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340623258
+      }
+    ],
+    "8.3 Add `skipStormCue()`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778510
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340627796
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340654954
+      }
+    ],
+    "9.1 Call the storm from `enterStart` and `beginIntro`": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778566
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340658624
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340681915
+      }
+    ],
+    "9.2 Stop the storm when sound turns off": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778612
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340684947
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340720396
+      }
+    ],
+    "10.1 Delete the old boot code from game.js": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778661
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340723743
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795341220736
+      }
+    ],
+    "10.2 Delete the old boot styles from style.css": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778711
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795341239268
+      },
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795341270319
+      }
+    ],
+    "11. Checkpoint - Manual browser check": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339778762
+      }
+    ],
+    "1. Add the start sequence constants": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339855075
+      }
+    ],
+    "2. Add the loading screen markup and styles (hidden for now)": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795339941627
+      }
+    ],
+    "3. Add the loading screen logic (defined but not called yet)": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340002171
+      }
+    ],
+    "4. Add the start input and hand-off logic (defined but not called yet)": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340157614
+      }
+    ],
+    "5. Switch the page to the new loading screen": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340234005
+      }
+    ],
+    "6. Add the autostart": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340296103
+      }
+    ],
+    "7. Add the storm sound helpers (defined but not called yet)": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340557620
+      }
+    ],
+    "8. Add the storm start, stop, skip and fade functions (defined but not called yet)": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340655004
+      }
+    ],
+    "9. Wire the storm into the sequence and the sound switch": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795340720444
+      }
+    ],
+    "10. Remove the old boot code": [
+      {
+        "executionId": "15f0cc65-f013-48cc-89e4-8b53b7fe1bdc",
+        "chatSessionId": "sess_b788eaef-3659-4d25-92ac-3fccc857af07",
+        "timestamp": 1795341270404
+      }
+    ]
+  }
+}

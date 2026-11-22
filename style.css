@@ -16,6 +16,15 @@ body {
   flex-direction: column;
 }
 
+/* Wrapper: takes the space #output used to take. The loading screen covers it. */
+#output-wrap {
+  position: relative;         /* anchor for the loading screen */
+  flex: 1;
+  min-height: 0;              /* lets #output scroll inside */
+  display: flex;
+  flex-direction: column;
+}
+
 /* Output_Display: monospace, left-aligned, grows with content and scrolls. */
 #output {
   flex: 1;                    /* take all space left after the input */
@@ -88,9 +97,74 @@ body {
   align-items: center;       /* keep title and room text centered next to the taller button */
 }
 
-/* Boot screen lines are green, like the rest of the terminal text. */
-.boot-line {
+/* Loading screen: hidden by default, covers only the output area. */
+#loading-screen {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* While the body is "starting", show the screen and hide the output. */
+body.starting #loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+body.starting #output {
+  visibility: hidden;
+}
+
+/* LOADING word and dots stay on one line. JS sets the word's font size. */
+#loading-title {
+  font-family: monospace;
   color: #33ff66;
+  white-space: nowrap;
+}
+
+/* Fixed width so the word does not jump as the dots change. */
+#loading-dots {
+  display: inline-block;
+  width: 3ch;
+  text-align: left;
+}
+
+/* Blinking prompt. */
+#loading-prompt {
+  font-family: monospace;
+  font-size: 18px;
+  color: #33ff66;
+  margin-top: 32px;
+  animation: blink-prompt 1s steps(1) infinite;
+}
+
+@keyframes blink-prompt {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Small, dim skip hint. */
+#loading-hint {
+  font-family: monospace;
+  font-size: 14px;
+  color: #1f9940;
+  opacity: 0.7;
+  margin-top: 12px;
+}
+
+/* Hidden but still takes its space, so nothing moves when it appears. */
+.loading-hidden {
+  visibility: hidden;
 }
 
 /* Sound toggle: a plain button styled to fit the green status bar. */
@@ -125,5 +199,21 @@ body {
 
   #sound-toggle {
     font-size: 14px;
+  }
+
+  /* Smaller text so the prompt fits at 320px */
+  #loading-prompt {
+    font-size: 13px;
+  }
+
+  #loading-hint {
+    font-size: 11px;
+  }
+}
+
+/* No blinking for players who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  #loading-prompt {
+    animation: none;
   }
 }

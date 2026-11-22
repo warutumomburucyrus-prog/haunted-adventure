@@ -178,6 +178,10 @@ Sound-shaping numbers also live in named constants so the sequence code has no l
 | `STORM_CLICK_HZ` | 1800 | Lock click pitch |
 | `STORM_NOISE_BUFFER_S` | 3 | Length of the shared noise buffer |
 
+Why these frequencies: small laptop and phone speakers cannot play much below about 100 Hz, so a thud that starts at 90 Hz and thunder cut off at 120 Hz were close to silent there. The thud now drops from 150 to 70 Hz, so its start is audible on small speakers while the drop still feels heavy on larger ones. The thunder cutoffs rise to 450 and 800 Hz so the rumble has audible mid-range content. The door slam noise burst is band-passed at 300 to 1500 Hz, which gives it body in the range small speakers reproduce well.
+
+Loudness cap with the new filters: a filter changes which frequencies pass, and can ring or boost near its cutoff, so it can change the level of the signal. In every storm sound the gain node that sets the peak (`stormPeak(factor)`) comes after the filter, and the filter is set up with no extra gain (a band-pass with Q about 0.56 is gentle, and the low-pass filters use their default Q). The envelope ramps to `stormPeak(factor)` and the thud, burst and thunder pass through `stormMaster` (gain 1) only. The code treats `stormPeak(factor)` as the value the gain envelope reaches, and the cap holds as long as the filter does not boost the noise a lot. To guard against that, the noise source is created at a level of 1 or less, the filters use low Q values, and the manual check below includes a loudness listen. Raising the cutoffs or adding the band-pass therefore does not change the cap constants, and every sound stays at or below `SOUND_VOLUME * STORM_PEAK_MAX`.
+
 The older `STORM_*_LEVEL` constants are gone. Peaks are no longer absolute numbers but shares of one cap, so no sound can be set above it by mistake.
 
 ### game.js: variables (replace the boot variables)
@@ -337,6 +341,8 @@ Manual browser checks, in order:
 | Press a letter before 1.5 seconds | Sequence starts. Prompt lines vanish. | 3.9, 3.10 |
 | Sound on: listen for 5 seconds | Rain fades in, distant thunder, louder close thunder, door slam (the loudest), two clicks. Loading screen stays, dots keep moving. | 4.1, 4.2, 5.3 to 5.7, 5.13 to 5.16 |
 | Loudness | With the volume at a normal level, no storm sound is louder than the door slam. Close thunder is quieter than the slam. Distant thunder is the quietest effect. Rain is not louder than the slam. | 5.2, 5.13 to 5.16 |
+| Listen on a small speaker (phone speaker or small laptop speaker, no headphones) | The door slam is heard clearly as a knock with a sharp body, not just a faint click. Both thunder sounds have an audible rumble. Nothing is louder than the door slam. | 5.4 to 5.6, 5.13 to 5.15 |
+| Listen on headphones or larger speakers | The door slam still feels heavy. The thunder is not harsh or hissy. No sound clips or distorts. | 5.2, 5.13 to 5.16 |
 | At 5 seconds | Loading screen goes. Intro types. Rain stays under it and fades over 6 seconds. Command input is empty. | 4.3, 4.4, 4.10, 5.8, 5.9, 3.11 |
 | Press a key within 0.8 seconds of entry | Ignored. | 4.6 |
 | Press a key after 0.8 seconds, during the thunder | Intro starts at once. Thunder, slam and clicks stop within about 0.2 seconds. Rain keeps going under the intro and fades out over about 1.5 seconds, not 6. | 4.5, 6.6 to 6.8 |

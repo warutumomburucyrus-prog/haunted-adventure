@@ -7,7 +7,7 @@
   <!-- Dark, haunted look comes from this stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="starting">
 
   <!-- Status bar: the game title for now, the room name later -->
   <div id="status-bar">
@@ -16,13 +16,25 @@
     <button type="button" id="sound-toggle">SOUND: ON</button>
   </div>
 
-  <!-- Output_Display: history appears here, with the prompt as the last line -->
-  <div id="output">
-    <form id="command-form">
-      <span id="prompt">&gt;&gt;</span>
-      <span id="typed"></span><span id="cursor"></span><span id="typed-after"></span>
-      <input type="text" id="command-input" maxlength="100" autocomplete="off" autofocus>
-    </form>
+  <!-- Wrapper: lets the loading screen sit on top of the output area only -->
+  <div id="output-wrap">
+
+    <!-- Loading screen: black cover with LOADING and dots (hidden until the body is "starting") -->
+    <div id="loading-screen">
+      <div id="loading-title"><span id="loading-word">Loading</span><span id="loading-dots"></span></div>
+      <!-- Prompt and hint stay hidden until game code shows them -->
+      <div id="loading-prompt" class="loading-hidden">PRESS ANY KEY OR TAP TO ENTER</div>
+    </div>
+
+    <!-- Output_Display: history appears here, with the prompt as the last line -->
+    <div id="output">
+      <form id="command-form">
+        <span id="prompt">&gt;&gt;</span>
+        <span id="typed"></span><span id="cursor"></span><span id="typed-after"></span>
+        <input type="text" id="command-input" maxlength="100" autocomplete="off" autofocus>
+      </form>
+    </div>
+
   </div>
 
   <!-- Game logic lives in this script -->

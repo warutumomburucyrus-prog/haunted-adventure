@@ -49,8 +49,62 @@ const SOUND_MIN_GAP_MS = 25;
 // The key used to save the player's sound choice in the browser.
 const SOUND_STORAGE_KEY = "haunted-sound";
 
-// The time to type all the boot screen lines, in milliseconds.
-const BOOT_TOTAL_MS = 1800;
+// ---- Start sequence settings ----
+// These tune the loading screen and the storm sound before the game starts.
+// They only change what the player sees and hears.
+
+// Timing: how long each part of the start sequence lasts.
+const LOADING_DOT_MS = 400;           // time between dot changes after LOADING
+const LOADING_PROMPT_DELAY_MS = 2000; // wait before the "press any key" prompt shows
+const STORM_CUE_MS = 0;            // length of the storm before the intro (sound on)
+const LOADING_SILENT_MS = 2000;       // wait before the intro when there is no storm
+const LOADING_AUTOSTART_MS = 15000;   // start by itself after this long with no key
+const CUE_SKIP_GUARD_MS = 800;        // keys are ignored this long after the storm starts
+const CUE_FADE_OUT_MS = 200;          // fade of the effects when the storm is skipped
+const CUE_SKIP_RAIN_FADE_MS = 1500;   // fade of the rain when the storm is skipped
+
+// Word size: the LOADING word scales with the window width, within limits.
+const LOADING_WORD_VW = 8;       // size as a percent of the window width
+const LOADING_WORD_MIN_PX = 32;  // smallest size
+const LOADING_WORD_MAX_PX = 72;  // largest size
+
+// Storm timing: when each storm sound happens, in seconds (LOCK_GAP is in ms).
+const STORM_RAIN_FADE_IN_S = 1.5;      // rain fades in over this time
+const STORM_RAIN_FADE_OUT_S = 8;       // rain fades out after the intro starts
+const STORM_RAIN_HOLD_MS = 9000;
+const STORM_DISTANT_THUNDER_S = 2.0;   // distant thunder start
+const STORM_CLOSE_THUNDER_S = 5.5;     // close thunder start
+const STORM_DOOR_SLAM_S = 9.2;         // door slam start
+const STORM_LOCK_CLICK_S = 11.2;        // first lock click start
+const STORM_LOCK_GAP_MS = 120;         // time between the two lock clicks
+
+// Loudness: storm sounds use SOUND_VOLUME times these numbers.
+const STORM_PEAK_MAX = 1.0;            // top loudness for the storm
+const CLOSE_THUNDER_FACTOR = 0.8;      // close thunder
+const DISTANT_THUNDER_FACTOR = 0.4;    // distant thunder
+const STORM_RAIN_FACTOR = 0.5;         // rain
+const STORM_SLAM_FACTOR = 1;           // door slam (the loudest)
+const STORM_CLICK_FACTOR = 0.8;        // lock clicks
+const STORM_THUNDER_BOOST = 6;
+const STORM_RAIN_BOOST = 1.5; 
+const STORM_BURST_BOOST = 6;   
+
+// Sound shape: pitches (Hz), lengths (seconds) and buffer size of the storm sounds.
+const STORM_RAIN_LOW_HZ = 500;         // rain filter, low edge
+const STORM_RAIN_HIGH_HZ = 5000;       // rain filter, high edge
+const STORM_DISTANT_CUTOFF_HZ = 450;   // distant thunder rumble cutoff
+const STORM_CLOSE_CUTOFF_HZ = 800;     // close thunder rumble cutoff
+const STORM_DISTANT_TAIL_S = 2.0;      // distant thunder fade-out length
+const STORM_CLOSE_TAIL_S = 2.6;        // close thunder fade-out length
+const STORM_THUD_START_HZ = 220;       // door slam thud, start pitch
+const STORM_THUD_END_HZ = 110;          // door slam thud, end pitch
+const STORM_SLAM_BAND_LOW_HZ = 300;    // door slam noise burst, low edge
+const STORM_SLAM_BAND_HIGH_HZ = 1500;  // door slam noise burst, high edge
+const STORM_THUD_S = 0.4;              // door slam thud length
+const STORM_BURST_S = 0.08;            // door slam noise burst length
+const STORM_CLICK_S = 0.03;           // lock click length
+const STORM_CLICK_HZ = 1800;           // lock click pitch
+const STORM_NOISE_BUFFER_S = 3;        // length of the shared noise buffer
 
 // ---- Sound variables ----
 // These hold presentation facts only. Never game facts.
@@ -67,25 +121,24 @@ let lastSoundTime = -Infinity;
 // The length of the typed command the last time we checked it.
 let lastInputLength = 0;
 
-// Which part of the start screen we are in. "done" means the game is running.
-// It starts as "typing" so no command runs during the boot screen.
-let bootPhase = "typing";
+// ---- Start sequence variables ----
+// Presentation only. None of these belong in gameState.
 
-// The boot screen lines. They are built when the boot screen starts.
-let bootLines = [];
+// Which part of the start sequence we are in:
+// "loading", "cue", "auto" or "done" (the game is running).
+let startPhase = "loading";
 
-// The output div of each boot line.
-let bootDivs = [];
+// The time (performance.now) of the key press that started the sequence.
+let entryTime = 0;
 
-// The id of the pending boot typing timer, or null.
-let bootTimer = null;
+// The ids of the pending start timers, or null when none is waiting.
+let dotTimer = null;
+let promptTimer = null;
+let autostartTimer = null;
+let handoffTimer = null;
 
-// Where boot typing is now: which line, and how many characters of it are shown.
-let bootLineIndex = 0;
-let bootCharCount = 0;
-
-// The delay between two boot characters, in milliseconds.
-let bootDelay = 0;
+// How many dots show after LOADING right now (0 to 3).
+let dotCount = 0;
 
 // ---- Sound engine ----
 // These functions only make noise. They never read or change the game state.
@@ -135,6 +188,8 @@ function updateSoundToggle() {
 // Turns sound on or off, remembers the choice, and updates the button.
 function setSound(on) {
   soundEnabled = !!on;
+  // Muting stops the storm at once. Turning sound on does not restart it.
+  if (!soundEnabled) stopStormCue(0);
   saveSoundChoice();
   updateSoundToggle();
   if (soundEnabled) ensureAudio(); // Create the audio object when turning on.
@@ -203,6 +258,316 @@ function playBackspaceClick() {
 // Low, loud clack when a command is sent to the game.
 function playClack() {
   playSound("square", 300, 0.09, 0.80);
+}
+
+// ---- Storm engine ----
+// The storm sounds build their own audio nodes. They do not use playSound.
+
+let stormMaster = null;   // Gain node for thunder, door slam and clicks.
+let stormSources = [];    // Effect sources, so they can be stopped later.
+let stormNoise = null;    // Shared noise buffer, built once.
+let rainSource = null;    // The looping rain source.
+let rainGain = null;      // The rain's own gain node.
+
+// Loudest allowed level for a storm sound. factor is from 0 to 1.
+function stormPeak(factor) {
+  return SOUND_VOLUME * STORM_PEAK_MAX * factor;
+}
+
+// Builds the shared noise buffer once. Does nothing if it already exists.
+function makeNoise() {
+  if (stormNoise) return;
+  const length = Math.floor(audioCtx.sampleRate * STORM_NOISE_BUFFER_S);
+  const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < length; i++) {
+    data[i] = Math.random() * 2 - 1; // Random value from -1 to 1.
+  }
+  stormNoise = buffer;
+}
+
+// Starts the looping rain at audio time t0. It goes straight to the speakers.
+function startRain(t0) {
+  // Looping noise source.
+  rainSource = audioCtx.createBufferSource();
+  rainSource.buffer = stormNoise;
+  rainSource.loop = true;
+
+  // Keep only the band that sounds like rain.
+  const highPass = audioCtx.createBiquadFilter();
+  highPass.type = "highpass";
+  highPass.frequency.value = STORM_RAIN_LOW_HZ;
+  const lowPass = audioCtx.createBiquadFilter();
+  lowPass.type = "lowpass";
+  lowPass.frequency.value = STORM_RAIN_HIGH_HZ;
+
+  // Fade in from silence to the rain's peak level.
+  rainGain = audioCtx.createGain();
+  rainGain.gain.setValueAtTime(0, t0);
+  rainGain.gain.linearRampToValueAtTime(stormPeak(STORM_RAIN_FACTOR) * STORM_RAIN_BOOST, t0 + STORM_RAIN_FADE_IN_S);
+
+  // Not through stormMaster, so thunder fades do not touch the rain.
+  rainSource.connect(highPass);
+  highPass.connect(lowPass);
+  lowPass.connect(rainGain);
+  rainGain.connect(audioCtx.destination);
+  rainSource.start(t0);
+}
+
+// Remembers an effect source so a stop can end it.
+function trackSource(source) {
+  stormSources.push(source);
+}
+
+// Schedules one thunder rumble at audio time "when".
+// factor is 0 to 1, cutoffHz is the low-pass cutoff, tailS is the fade length.
+function scheduleThunder(when, factor, cutoffHz, tailS) {
+  const riseS = 0.05;    // Quick rise to the peak.
+  const marginS = 0.1;   // Small extra time before the source stops.
+
+  // Noise source from the shared buffer.
+  const source = audioCtx.createBufferSource();
+  source.buffer = stormNoise;
+
+  // Low-pass filter: a lower cutoff gives a deeper rumble.
+  const lowPass = audioCtx.createBiquadFilter();
+  lowPass.type = "lowpass";
+  lowPass.frequency.value = cutoffHz;
+
+  // The gain comes after the filter, so the peak is always stormPeak(factor).
+  // The level never goes to 0, because an exponential ramp cannot reach 0.
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.linearRampToValueAtTime(stormPeak(factor) * STORM_THUNDER_BOOST, when + riseS);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + tailS);
+
+  source.connect(lowPass);
+  lowPass.connect(gain);
+  gain.connect(stormMaster);
+  trackSource(source);
+  source.start(when);
+  source.stop(when + tailS + marginS);
+}
+
+// Schedules the door slam at audio time "when": a low thud plus a noise burst.
+function scheduleDoorSlam(when) {
+  const riseS = 0.01;    // Very quick rise to the peak.
+  const marginS = 0.1;   // Small extra time before the sources stop.
+
+  // Thud: a sine wave whose pitch drops.
+  const osc = audioCtx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(STORM_THUD_START_HZ, when);
+  osc.frequency.exponentialRampToValueAtTime(STORM_THUD_END_HZ, when + STORM_THUD_S);
+
+  // Own gain node: quick rise, then fade (never to exactly 0).
+  const thudGain = audioCtx.createGain();
+  thudGain.gain.setValueAtTime(0.0001, when);
+  thudGain.gain.linearRampToValueAtTime(stormPeak(STORM_SLAM_FACTOR), when + riseS);
+  thudGain.gain.exponentialRampToValueAtTime(0.0001, when + STORM_THUD_S);
+
+  osc.connect(thudGain);
+  thudGain.connect(stormMaster);
+  trackSource(osc);
+  osc.start(when);
+  osc.stop(when + STORM_THUD_S + marginS);
+
+  // Burst: noise through a band-pass filter.
+  const burst = audioCtx.createBufferSource();
+  burst.buffer = stormNoise;
+
+  // Band-pass wants a center and a Q, so work them out from the two edges.
+  const center = Math.sqrt(STORM_SLAM_BAND_LOW_HZ * STORM_SLAM_BAND_HIGH_HZ);
+  const bandPass = audioCtx.createBiquadFilter();
+  bandPass.type = "bandpass";
+  bandPass.frequency.value = center;
+  bandPass.Q.value = center / (STORM_SLAM_BAND_HIGH_HZ - STORM_SLAM_BAND_LOW_HZ);
+
+  // Gain comes after the filter, so the peak is stormPeak(STORM_SLAM_FACTOR).
+  const burstGain = audioCtx.createGain();
+  burstGain.gain.setValueAtTime(0.0001, when);
+  burstGain.gain.linearRampToValueAtTime(stormPeak(STORM_SLAM_FACTOR) * STORM_BURST_BOOST, when + riseS);
+  burstGain.gain.exponentialRampToValueAtTime(0.0001, when + STORM_BURST_S);
+
+  burst.connect(bandPass);
+  bandPass.connect(burstGain);
+  burstGain.connect(stormMaster);
+  trackSource(burst);
+  burst.start(when);
+  burst.stop(when + STORM_BURST_S + marginS);
+}
+
+// Schedules one very short lock click at audio time "when".
+function scheduleLockClick(when) {
+  const marginS = 0.01;  // Small extra time before the source stops.
+
+  // Square wave gives a sharp click.
+  const osc = audioCtx.createOscillator();
+  osc.type = "square";
+  osc.frequency.value = STORM_CLICK_HZ;
+
+  const gain = audioCtx.createGain();
+  gain.gain.value = stormPeak(STORM_CLICK_FACTOR);
+
+  osc.connect(gain);
+  gain.connect(stormMaster);
+  trackSource(osc);
+  osc.start(when);
+  osc.stop(when + STORM_CLICK_S + marginS);
+}
+
+// Starts the whole storm: rain, two thunders, door slam and two lock clicks.
+// Any failure stops the storm quietly.
+function startStormCue() {
+  try {
+    // Same volume check as playSound.
+    if (!audioCtx) return;
+    if (typeof SOUND_VOLUME !== "number" || !isFinite(SOUND_VOLUME) ||
+        SOUND_VOLUME < 0 || SOUND_VOLUME > 1) return;
+
+    // Wake the audio up if needed. Ignore any failure.
+    const result = audioCtx.resume();
+    if (result && result.catch) result.catch(function () {});
+
+    // Master gain for thunder, slam and clicks.
+    stormMaster = audioCtx.createGain();
+    stormMaster.gain.value = 1;
+    stormMaster.connect(audioCtx.destination);
+    makeNoise();
+
+    // Schedule everything on the audio clock, with a small margin.
+    const t0 = audioCtx.currentTime + 0.05;
+    startRain(t0);
+    scheduleThunder(t0 + STORM_DISTANT_THUNDER_S, DISTANT_THUNDER_FACTOR,
+      STORM_DISTANT_CUTOFF_HZ, STORM_DISTANT_TAIL_S);
+    scheduleThunder(t0 + STORM_CLOSE_THUNDER_S, CLOSE_THUNDER_FACTOR,
+      STORM_CLOSE_CUTOFF_HZ, STORM_CLOSE_TAIL_S);
+    scheduleDoorSlam(t0 + STORM_DOOR_SLAM_S);
+    scheduleLockClick(t0 + STORM_LOCK_CLICK_S);
+    scheduleLockClick(t0 + STORM_LOCK_CLICK_S + STORM_LOCK_GAP_MS / 1000);
+  } catch (error) {
+    // Something failed: clean up quietly.
+    try {
+      stopStormCue(0);
+    } catch (innerError) {
+      // Ignore.
+    }
+  }
+}
+
+// Fades one gain node to 0 over fadeS seconds (0 means at once).
+function fadeGainToZero(gainNode, now, fadeS) {
+  const param = gainNode.gain;
+  const current = param.value;       // Current level, held before the ramp.
+  param.cancelScheduledValues(now);
+  if (fadeS > 0) {
+    param.setValueAtTime(current, now);
+    param.linearRampToValueAtTime(0, now + fadeS);
+  } else {
+    param.setValueAtTime(0, now);
+  }
+}
+
+// Stops the whole storm cue. Does nothing if no storm is playing.
+function stopStormCue(fadeMs) {
+  if (!stormMaster && !rainSource) return;
+
+  const now = audioCtx.currentTime;
+  const fadeS = (typeof fadeMs === "number" && fadeMs > 0) ? fadeMs / 1000 : 0;
+
+  // Fade the master gain and the rain gain.
+  try {
+    if (stormMaster) fadeGainToZero(stormMaster, now, fadeS);
+  } catch (error) {
+    // Ignore.
+  }
+  try {
+    if (rainGain) fadeGainToZero(rainGain, now, fadeS);
+  } catch (error) {
+    // Ignore.
+  }
+
+  // Stop every tracked effect source, each on its own.
+  for (let i = 0; i < stormSources.length; i++) {
+    try {
+      stormSources[i].stop(now + fadeS);
+    } catch (error) {
+      // Ignore.
+    }
+  }
+
+  // Stop the rain source.
+  try {
+    if (rainSource) rainSource.stop(now + fadeS);
+  } catch (error) {
+    // Ignore.
+  }
+
+  // Forget everything. stormNoise stays cached.
+  stormMaster = null;
+  stormSources = [];
+  rainSource = null;
+  rainGain = null;
+}
+
+// Fades only the rain to silence, then stops it.
+function fadeRain(seconds) {
+  if (!rainSource || !rainGain) return;
+  try {
+    const source = rainSource;
+    const gainNode = rainGain;
+    const now = audioCtx.currentTime;
+    const param = gainNode.gain;
+
+    // Hold the current level, then ramp to 0.
+    const current = param.value;
+    param.cancelScheduledValues(now);
+    param.setValueAtTime(current, now);
+    param.linearRampToValueAtTime(0, now + seconds);
+
+    // Reset the rain variables once it has ended (only if still the same rain).
+    source.onended = function () {
+      if (rainSource === source) {
+        rainSource = null;
+        rainGain = null;
+      }
+    };
+    source.stop(now + seconds);
+  } catch (error) {
+    // Ignore.
+  }
+}
+
+// Skips the storm: effects fade out quickly, the rain fades out slowly.
+function skipStormCue() {
+  try {
+    if (audioCtx && stormMaster) {
+      const now = audioCtx.currentTime;
+      const fadeS = CUE_FADE_OUT_MS / 1000;
+
+      // Fade the effects bus to 0 (the rain has its own bus).
+      fadeGainToZero(stormMaster, now, fadeS);
+
+      // Stop every tracked effect at the end of the fade.
+      // Events not yet played never start.
+      for (let i = 0; i < stormSources.length; i++) {
+        try {
+          stormSources[i].stop(now + fadeS);
+        } catch (error) {
+          // Ignore.
+        }
+      }
+
+      // Forget the effects. The rain variables stay.
+      stormMaster = null;
+      stormSources = [];
+    }
+  } catch (error) {
+    // Ignore.
+  }
+
+  // The rain fades on its own, slower than the effects.
+  fadeRain(CUE_SKIP_RAIN_FADE_MS / 1000);
 }
 
 // ---- Fear constants ----
@@ -802,114 +1167,150 @@ function showLines(lines) {
   }
 }
 
-// startBoot begins the boot screen: it builds the lines and types them.
-function startBoot() {
-  bootPhase = "typing";
-  // Hide the prompt while the boot screen types.
-  document.getElementById("command-form").classList.add("typing");
-
-  // The sound line depends on whether sound is on right now.
-  const soundLine = soundEnabled
-    ? 'Sound is on. Type "sound off" to turn it off.'
-    : 'Sound is off. Type "sound on" to turn it on.';
-  bootLines = [
-    "HAUNTED ADVENTURE",
-    "SYSTEM READY",
-    soundLine,
-    "Press Enter or tap to skip the typing.",
-    "PRESS ANY KEY"
-  ];
-
-  // One empty div per line, placed above the prompt.
-  const output = document.getElementById("output");
-  const form = document.getElementById("command-form");
-  bootDivs = bootLines.map(() => {
-    const div = document.createElement("div");
-    div.className = "boot-line";
-    output.insertBefore(div, form);
-    return div;
-  });
-
-  // Reduced motion: show everything at once.
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    skipBoot();
-    return;
-  }
-
-  // The same time for every character, so the whole screen takes BOOT_TOTAL_MS.
-  const totalChars = bootLines.join("").length;
-  bootDelay = BOOT_TOTAL_MS / totalChars;
-  bootLineIndex = 0;
-  bootCharCount = 0;
-  typeBootChar();
-}
-
-// typeBootChar adds one character to the current boot line, then waits.
-function typeBootChar() {
-  bootCharCount++;
-  bootDivs[bootLineIndex].textContent = bootLines[bootLineIndex].slice(0, bootCharCount);
-  // Move to the next line when this one is full.
-  if (bootCharCount >= bootLines[bootLineIndex].length) {
-    bootLineIndex++;
-    bootCharCount = 0;
-  }
-  if (bootLineIndex >= bootLines.length) {
-    // All typed: wait for a key.
-    bootTimer = null;
-    bootPhase = "waiting";
-  } else {
-    bootTimer = setTimeout(typeBootChar, bootDelay);
-  }
-}
-
-// skipBoot shows every boot line in full at once and waits for a key.
-function skipBoot() {
-  clearTimeout(bootTimer);
-  bootTimer = null;
-  for (let i = 0; i < bootDivs.length; i++) {
-    bootDivs[i].textContent = bootLines[i];
-  }
-  bootPhase = "waiting";
-}
-
-// finishBoot ends the start screen and starts the game: it types the intro
-// and the opening room, then puts the caret back in the input.
-function finishBoot() {
-  bootPhase = "done";
-  document.getElementById("command-form").classList.remove("typing");
-  // Same call init() uses for the intro.
-  showLines([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
-  document.getElementById("command-input").focus();
-}
-
-// These keys alone do not count as "press any key".
-const BOOT_IGNORED_KEYS = [
+// These keys alone do not start the sequence.
+const START_IGNORED_KEYS = [
   "Shift", "Control", "Alt", "AltGraph", "Meta", "OS", "CapsLock", "NumLock",
   "ScrollLock", "Fn", "FnLock", "Hyper", "Super", "Symbol", "SymbolLock",
   "Tab", "Escape"
 ];
 
-// handleBootInput reacts to a key or click during the start screen.
-function handleBootInput(event) {
+// handleStartInput reacts to a key or click during the start sequence.
+function handleStartInput(event) {
   // Once the game runs, do nothing.
-  if (bootPhase === "done") return;
+  if (startPhase === "done") return;
   // Leave the sound button alone.
   if (event.target && event.target.closest && event.target.closest("#sound-toggle")) return;
   if (event.type === "keydown") {
-    // Leave browser shortcuts, modifier keys, Tab, F1-F12 and Escape alone.
+    // Leave browser shortcuts, held keys, modifiers, Tab, Escape and F1-F12 alone.
     if (event.ctrlKey || event.altKey || event.metaKey) return;
-    if (BOOT_IGNORED_KEYS.includes(event.key)) return;
+    if (event.repeat) return;
+    if (START_IGNORED_KEYS.includes(event.key)) return;
     if (/^F([1-9]|1[0-2])$/.test(event.key)) return;
   }
   // Any other key or click is used up here, so the page does not see it.
   event.preventDefault();
   event.stopPropagation();
-  if (bootPhase === "typing") {
-    skipBoot();           // first press: show all the text
-  } else if (bootPhase === "waiting") {
-    ensureAudio();        // this press allows sound
-    finishBoot();         // second press: start the game
+  if (startPhase === "loading") {
+    enterStart();         // first press: start the storm cue
+  } else if (startPhase === "cue") {
+    // Skip only after the guard time, so a double press does not skip.
+    if (performance.now() - entryTime >= CUE_SKIP_GUARD_MS) beginIntro(true);
   }
+  // In "auto" nothing happens: the intro starts by itself.
+}
+
+// updateDots cycles the dots after LOADING: 0, 1, 2, 3, then back to 0.
+function updateDots() {
+  dotCount = (dotCount + 1) % 4;
+  document.getElementById("loading-dots").textContent = ".".repeat(dotCount);
+}
+
+// Shows or hides the "press any key" lines. If the page does not have them,
+// it quietly does nothing, so a missing element can never freeze the start.
+function setLoadingPromptVisible(visible) {
+  for (const id of ["loading-prompt", "loading-hint"]) {
+    const element = document.getElementById(id);
+    if (element) element.classList.toggle("loading-hidden", !visible);
+  }
+}
+
+// showLoadingPrompt reveals the "press any key" prompt and hint.
+function showLoadingPrompt() {
+  // Too late if the sequence already moved on.
+  if (startPhase !== "loading") return;
+  document.getElementById("loading-prompt").classList.remove("loading-hidden");
+  document.getElementById("loading-hint").classList.remove("loading-hidden");
+}
+
+// startLoading starts the loading screen: word size, dots and prompt timer.
+function startLoading() {
+  // The word scales with the window width, within the min and max sizes.
+  // The word AND the dots scale together, so the size goes on the whole title.
+  const title = document.getElementById("loading-title") || document.getElementById("loading-word");
+  if (title) {
+    title.style.fontSize =
+      "clamp(" + LOADING_WORD_MIN_PX + "px, " + LOADING_WORD_VW + "vw, " + LOADING_WORD_MAX_PX + "px)";
+  }
+
+  // Reduced motion: static dots. Otherwise the dots move.
+  const dots = document.getElementById("loading-dots");
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    dots.textContent = "...";
+  } else {
+    dotCount = 0;
+    dots.textContent = "";
+    dotTimer = setInterval(updateDots, LOADING_DOT_MS);
+  }
+
+  // The prompt shows after a short wait. With no key, the game starts by itself.
+  promptTimer = setTimeout(showLoadingPrompt, LOADING_PROMPT_DELAY_MS);
+  autostartTimer = setTimeout(startAuto, LOADING_AUTOSTART_MS);
+}
+
+// startAuto starts the game with no key press: silent, no storm, no audio.
+function startAuto() {
+  // Too late if a key already started the sequence.
+  if (startPhase !== "loading") return;
+  startPhase = "auto";
+
+  // Hide the prompt and hint. Sound settings are left untouched.
+  clearTimeout(promptTimer);
+  promptTimer = null;
+  document.getElementById("loading-prompt").classList.add("loading-hidden");
+  document.getElementById("loading-hint").classList.add("loading-hidden");
+
+  // Short silent wait, then the intro.
+  handoffTimer = setTimeout(function () { beginIntro(false); }, LOADING_SILENT_MS);
+}
+
+// enterStart handles the first key press or tap. Sound starts FIRST, so
+// nothing on the page can stop it. The intro follows at once.
+function enterStart() {
+  startPhase = "cue";
+  entryTime = performance.now();
+
+  // This press allows sound. Start the storm right away.
+  ensureAudio();
+  if (soundEnabled) startStormCue();
+
+  // Hand over to the intro at once. The storm keeps playing under the text.
+  handoffTimer = setTimeout(function () { beginIntro(false); }, STORM_CUE_MS);
+
+  // The autostart is no longer needed, and the prompt is hidden.
+  clearTimeout(promptTimer);
+  promptTimer = null;
+  clearTimeout(autostartTimer);
+  autostartTimer = null;
+  setLoadingPromptVisible(false);
+}
+
+// beginIntro ends the loading screen and types the intro. It runs once.
+function beginIntro(skipped) {
+  // A skip and a timer may fire together: only the first one counts.
+  if (startPhase !== "cue" && startPhase !== "auto") return;
+  startPhase = "done";
+
+  clearTimeout(promptTimer);
+  promptTimer = null;
+  clearTimeout(autostartTimer);
+  autostartTimer = null;
+  clearTimeout(handoffTimer);
+  handoffTimer = null;
+  clearInterval(dotTimer);
+  dotTimer = null;
+
+  // Show the game screen FIRST, so nothing below can leave the screen stuck.
+  document.body.classList.remove("starting");
+
+  // Skipped: cut the storm short. Otherwise the rain plays under the intro
+  // for a while, then fades out. (Does nothing when no storm is playing.)
+  if (skipped) skipStormCue();
+  else setTimeout(function () { fadeRain(STORM_RAIN_FADE_OUT_S); }, STORM_RAIN_HOLD_MS);
+
+  document.getElementById("command-input").value = "";
+  showTyped();
+  showLines([...INTRO, "\u00A0", ...handleLook(INITIAL_STATE).lines, "\u00A0"]);
+  document.getElementById("command-input").focus();
 }
 
 // handleUnknown is used when the player types something that is not a
@@ -1816,7 +2217,7 @@ function getSoundCommand(text) {
 // (Requirement 3.2)
 function handleSubmit(event) {
   event.preventDefault(); // always stop the page from reloading
-  if (bootPhase !== "done") return; // no commands during the start screen
+  if (startPhase !== "done") return; // no commands during the start screen
   // While text is typing, a submit only skips the typing. No command runs.
   if (typing) {
     skipTyping();
@@ -1872,7 +2273,7 @@ function init() {
   soundEnabled = loadSoundChoice();
   updateSoundToggle();
   updateStatusBar(gameState);
-  // The intro is typed later by finishBoot, after the start screen.
+  // The intro is typed later by beginIntro, after the start screen.
   const form = document.getElementById("command-form");
   form.addEventListener("submit", handleSubmit);
   document.getElementById("command-input").focus();
@@ -1882,7 +2283,7 @@ function init() {
   // Key sounds. Runs before showTyped, so lastInputLength is still the old length.
   // No sound while text is being typed on screen or during the start screen.
   typingBox.addEventListener("input", () => {
-    if (typing || bootPhase !== "done") return;
+    if (typing || startPhase !== "done") return;
     const length = typingBox.value.length;
     if (length > lastInputLength) {
       playKeyClick();       // text grew: a letter was typed
@@ -1948,12 +2349,12 @@ function init() {
   document.addEventListener("click", firstAction, true);
 
   // Start screen: keys and clicks are caught first (capture phase).
-  document.addEventListener("keydown", handleBootInput, true);
-  document.addEventListener("click", handleBootInput, true);
+  document.addEventListener("keydown", handleStartInput, true);
+  document.addEventListener("click", handleStartInput, true);
 
-  // Show the boot screen last, once sound is loaded and listeners exist.
+  // Show the loading screen last, once sound is loaded and listeners exist.
   // Only init() calls it, so it shows once per page load (not on restart).
-  startBoot();
+  startLoading();
 }
 
 // Start the game when the page is ready. The document check keeps this
