@@ -217,3 +217,46 @@ body.starting #output {
     animation: none;
   }
 }
+
+/* The page itself never scrolls. Only the output box does. */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Phones: use the visible height, not the height under the address bar. */
+body {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* The header keeps its size and stays pinned at the top. */
+#status-bar {
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* Anything that sticks out of the output area is clipped here, so it
+   cannot stretch the page. */
+#output-wrap {
+  overflow: hidden;
+}
+
+/* When the output box hits its end, do not pass the scrolling on to the page. */
+#output {
+  overscroll-behavior: contain;
+}
+
+/* The hidden typing box stays inside the prompt line and can't be clicked. */
+#command-form {
+  position: relative;
+}
+
+#command-input {
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
