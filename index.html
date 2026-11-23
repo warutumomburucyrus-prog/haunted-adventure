@@ -9,11 +9,19 @@
 </head>
 <body class="starting">
 
-  <!-- Status bar: the game title for now, the room name later -->
-  <div id="status-bar">
-    <span>HAUNTED ADVENTURE</span>
-    <span id="status-info"></span>
-    <button type="button" id="sound-toggle">SOUND: ON</button>
+  <!-- Header: pinned at the top. Holds the status bar and the inventory strip -->
+  <div id="header">
+
+    <!-- Status bar: the game title for now, the room name later -->
+    <div id="status-bar">
+      <span>HAUNTED ADVENTURE</span>
+      <span id="status-info"></span>
+      <button type="button" id="sound-toggle">SOUND: ON</button>
+    </div>
+
+    <!-- Inventory strip: game code draws the carried items here -->
+    <div id="inventory-strip" role="group" aria-label="Inventory"></div>
+
   </div>
 
   <!-- Wrapper: lets the loading screen sit on top of the output area only -->

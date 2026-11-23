@@ -1,0 +1,293 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Wrap `#status-bar` in a new `#header` div and add the empty `#inventory-strip` div": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431264795
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431283562
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431342027
+      }
+    ],
+    "2.1 Move the pinned-header rules from `#status-bar` to a new `#header` rule": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431265944
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431349718
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431462216
+      }
+    ],
+    "2.2 Add the `#inventory-strip` rule and the `.strip-label` rule": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266035
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431480401
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431706568
+      }
+    ],
+    "2.3 Add the rule that hides the strip while the loading screen shows": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266124
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431710098
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795432783853
+      }
+    ],
+    "2.4 Add the `.carried-icon` and `.carried-icon svg` rules": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266262
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795432788863
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795432969513
+      }
+    ],
+    "2.5 Add the pickup flash, the lit-lamp flicker and the reduced-motion rules": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266318
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795432973427
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795433229617
+      }
+    ],
+    "3.1 Add the two layout constants at the top of game.js": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266371
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795433236780
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795433966436
+      }
+    ],
+    "3.2 Add `STRIP_ITEM_NAMES` and the two presentation variables": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266421
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434075557
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434165155
+      }
+    ],
+    "3.3 Add `KEY_ROWS` and `ICONS` for the keys, lighter and oil can": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266474
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434174239
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434465281
+      }
+    ],
+    "3.4 Add `LAMP_PALETTE` and `LAMP_LOOKS` (dark, full, lit)": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266527
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434471125
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434605036
+      }
+    ],
+    "3.5 Add `buildIconSvg(icon)`": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266585
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434661603
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434697448
+      }
+    ],
+    "3.6 Add `getLampLook(state)`": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266640
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434703173
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434774810
+      }
+    ],
+    "3.7 Add `updateInventoryStrip(state, quiet)`": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266692
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434778706
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434856712
+      }
+    ],
+    "3.8 Call `updateInventoryStrip(gameState, false)` right after `updateStatusBar(gameState)` in `init`": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266749
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434861450
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434924407
+      }
+    ],
+    "3.9 Call `updateInventoryStrip` right after `updateStatusBar(gameState)` in `handleSubmit`": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266902
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434928883
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434958177
+      }
+    ],
+    "4. Checkpoint - Confirm the strip is wired in": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431266952
+      },
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434968563
+      }
+    ],
+    "1. Add the header wrapper and the strip to index.html": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795431342101
+      }
+    ],
+    "2. Add the strip styles to style.css": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795433229697
+      }
+    ],
+    "3. Add the inventory strip code to game.js": [
+      {
+        "executionId": "fca59c67-0866-42e2-9590-6c9f885a5a68",
+        "chatSessionId": "sess_f9bc958f-e1a3-4d6a-949e-66f57d94e48c",
+        "timestamp": 1795434958283
+      }
+    ]
+  }
+}

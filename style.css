@@ -216,6 +216,15 @@ body.starting #output {
   #loading-prompt {
     animation: none;
   }
+
+  /* Static flame, no pickup flash. */
+  .carried-icon.flash {
+    animation: none;
+  }
+
+  .carried-icon.lamp-lit .px-l {
+    animation: none;
+  }
 }
 
 /* The page itself never scrolls. Only the output box does. */
@@ -232,11 +241,75 @@ body {
 }
 
 /* The header keeps its size and stays pinned at the top. */
-#status-bar {
+#header {
   flex: 0 0 auto;
   position: sticky;
   top: 0;
   z-index: 20;
+}
+
+/* Inventory strip: one row with a label and the carried icons. */
+#inventory-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  /* Fixed height: icon size + 12px padding + 1px border. Same for 0 to 6 icons. */
+  height: calc(var(--icon-size, 32px) + 13px);
+  padding: 6px 8px;
+  background-color: #0a0a0a;
+  color: #33ff66;
+  font-family: monospace;
+  font-size: 13px;
+  border-bottom: 1px solid #1f9940;
+  overflow: hidden;             /* never cause sideways scrolling */
+}
+
+/* Hide the strip while the loading screen shows (body has "starting"). */
+body.starting #inventory-strip {
+  display: none;
+}
+
+/* The "CARRYING:" label and the "CARRYING: NOTHING" line: dim, same font. */
+.strip-label {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  color: #1f9940;
+  margin-right: 2px;
+}
+
+/* One carried icon. It may shrink, but never below 24px. */
+.carried-icon {
+  flex: 0 1 var(--icon-size, 32px);
+  min-width: 24px;
+  max-width: var(--icon-size, 32px);
+  aspect-ratio: 1 / 1;
+}
+
+/* The drawing fills its square box. */
+.carried-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Pickup flash: one short brightening. The length comes from --flash-ms. */
+.carried-icon.flash {
+  animation: icon-flash var(--flash-ms, 600ms) ease-out 1;
+}
+
+@keyframes icon-flash {
+  from { background-color: #33ff66; box-shadow: 0 0 8px #33ff66; }
+  to   { background-color: transparent; box-shadow: none; }
+}
+
+/* Lit lamp: only its flame cells (the letter "l") flicker. */
+.carried-icon.lamp-lit .px-l {
+  animation: flame-flicker 1.6s ease-in-out infinite;
+}
+
+@keyframes flame-flicker {
+  50% { opacity: 0.55; }
 }
 
 /* Anything that sticks out of the output area is clipped here, so it

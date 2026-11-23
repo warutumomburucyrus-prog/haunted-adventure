@@ -106,6 +106,16 @@ const STORM_CLICK_S = 0.03;           // lock click length
 const STORM_CLICK_HZ = 1800;           // lock click pitch
 const STORM_NOISE_BUFFER_S = 3;        // length of the shared noise buffer
 
+// ---- Inventory strip settings ----
+// These control how the inventory strip looks. They never change the game.
+
+// Size of one icon in pixels, a whole number from 24 to 40.
+// Icons shrink on narrow screens, but never below 24.
+const INVENTORY_ICON_PX = 32;
+
+// How long the pickup flash lasts, in milliseconds (200 to 2000).
+const INVENTORY_FLASH_MS = 600;
+
 // ---- Sound variables ----
 // These hold presentation facts only. Never game facts.
 
@@ -2192,6 +2202,254 @@ function processCommand(state, rawInput) {
   return { state: finalState, lines };
 }
 
+// ---- Inventory strip data ----
+
+// The name of each item that has an icon. The key is the item id in carriedItems.
+// The iron key has the item id "key" but is named "iron key".
+// An item id that is not in this list gets no icon and is skipped.
+// This is separate from the existing ITEM_NAMES. Do not change or redeclare that one.
+const STRIP_ITEM_NAMES = {
+  "lamp": "lamp",
+  "brass key": "brass key",
+  "rusty key": "rusty key",
+  "key": "iron key",
+  "lighter": "lighter",
+  "oil can": "oil can"
+};
+
+// ---- Inventory strip variables ----
+// Presentation only. None of these belong in gameState.
+
+// The item ids shown at the last update, or null before the first update.
+let lastShownItems = null;
+
+// A short text that describes what the strip shows now (items and lamp look).
+let lastStripSignature = null;
+
+// ---- Inventory strip icons ----
+// Each icon is 12 rows of 12 characters. "." is an empty cell.
+// Every other character is a color in the icon's palette.
+
+// Brass key and rusty key share one shape. Only the palette differs.
+const KEY_ROWS = [
+  "............",
+  "............",
+  "............",
+  "............",
+  "..bbb.......",
+  "..b.bsssss..",
+  "..bbb..s.s..",
+  "............",
+  "............",
+  "............",
+  "............",
+  "............"
+];
+
+const ICONS = {
+  "brass key": { rows: KEY_ROWS, palette: { b: "#f2d04a", s: "#d9ae22" } },
+  "rusty key": { rows: KEY_ROWS, palette: { b: "#b4531c", s: "#7d3a12" } },
+  key: {                                   // the iron key: thicker bow and shaft
+    rows: [
+      "............",
+      "............",
+      "..iii.......",
+      ".i...i......",
+      ".i...iiiiiii",
+      ".i...iiiiiii",
+      ".i...i..g..g",
+      "..iii.......",
+      "............",
+      "............",
+      "............",
+      "............"
+    ],
+    palette: { i: "#9bb5a3", g: "#6d8576" }
+  },
+  lighter: {
+    rows: [
+      "............",
+      ".....l......",
+      ".....l......",
+      "....ssss....",
+      "....bbbb....",
+      "....bbbb....",
+      "....bbbb....",
+      "....bbbb....",
+      "....bbbb....",
+      "....bbbb....",
+      "............",
+      "............"
+    ],
+    palette: { l: "#ffcc33", s: "#d0d0d0", b: "#c9a227" }
+  },
+  "oil can": {
+    rows: [
+      "............",
+      "............",
+      "............",
+      "..hhhh......",
+      "..h..h....p.",
+      ".cccccc...p.",
+      ".ccccccpppp.",
+      ".cccccc.....",
+      ".cccccc.....",
+      ".cccccc.....",
+      "............",
+      "............"
+    ],
+    palette: { h: "#8a8a8a", c: "#5d7f9a", p: "#b0b0b0" }
+  }
+};
+
+// The lamp has three looks. They share one palette.
+const LAMP_PALETTE = { h: "#c9a227", g: "#7fe3b0", f: "#d9b648", l: "#ffcc33" };
+
+const LAMP_LOOKS = {
+  // Empty: glass is empty, no flame.
+  dark: [
+    "............",
+    "....hhhh....",
+    "...gggggg...",
+    "...g....g...",
+    "...g....g.hh",
+    "...g....g..h",
+    "...g....g.hh",
+    "...gggggg...",
+    "..hhhhhhhh..",
+    "..hhhhhhhh..",
+    "............",
+    "............"
+  ],
+  // Fueled, not lit: fuel fill at the bottom of the glass, no flame.
+  full: [
+    "............",
+    "....hhhh....",
+    "...gggggg...",
+    "...g....g...",
+    "...g....g.hh",
+    "...gffffg..h",
+    "...gffffg.hh",
+    "...gggggg...",
+    "..hhhhhhhh..",
+    "..hhhhhhhh..",
+    "............",
+    "............"
+  ],
+  // Lit: a flame inside the glass.
+  lit: [
+    "............",
+    "....hhhh....",
+    "...gggggg...",
+    "...g.ll.g...",
+    "...gllllg.hh",
+    "...g.ll.g..h",
+    "...g....g.hh",
+    "...gggggg...",
+    "..hhhhhhhh..",
+    "..hhhhhhhh..",
+    "............",
+    "............"
+  ]
+};
+
+// buildIconSvg turns an icon into an inline SVG string with sharp edges.
+// It returns null if the icon is not 12 rows of 12 known characters.
+function buildIconSvg(icon) {
+  if (!icon || !Array.isArray(icon.rows) || icon.rows.length !== 12) return null;
+  let cells = "";
+  for (let y = 0; y < 12; y++) {
+    const row = icon.rows[y];
+    if (typeof row !== "string" || row.length !== 12) return null;
+    for (let x = 0; x < 12; x++) {
+      const ch = row[x];
+      if (ch === ".") continue;                         // empty cell
+      if (!icon.palette[ch]) return null;               // unknown character
+      cells += '<rect class="px-' + ch + '" x="' + x + '" y="' + y +
+        '" width="1" height="1" fill="' + icon.palette[ch] + '"/>';
+    }
+  }
+  return '<svg viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">' + cells + "</svg>";
+}
+
+// getLampLook picks "lit", "full" or "dark" from the lamp facts only.
+// It reads state.lit and state.fueled, never fear, the room or the narrator.
+function getLampLook(state) {
+  if (state.lit) return "lit";
+  if (state.fueled) return "full";
+  return "dark";
+}
+
+// updateInventoryStrip redraws the inventory strip from carriedItems, fueled and lit.
+// The strip always shows the true state, even when the narrator lies.
+// It only reads the state. It never changes it.
+// quiet is true after a restart: no pickup flash then.
+function updateInventoryStrip(state, quiet) {
+  try {
+    const strip = document.getElementById("inventory-strip");
+    if (!strip) return;
+
+    // Step 1: list the items to draw, in carriedItems order.
+    // Skip repeated ids, ids with no icon, and icons that are not valid.
+    const lampLook = getLampLook(state);
+    const shown = [];                                  // { id, name, svg }
+    for (const id of state.carriedItems) {
+      if (shown.some(item => item.id === id)) continue;   // same id twice: draw once
+      if (!STRIP_ITEM_NAMES[id]) continue;                // no icon for this id
+      const icon = id === "lamp"
+        ? { rows: LAMP_LOOKS[lampLook], palette: LAMP_PALETTE }
+        : ICONS[id];
+      const svg = buildIconSvg(icon);
+      if (!svg) continue;                                 // invalid icon: skip it
+      shown.push({ id: id, name: STRIP_ITEM_NAMES[id], svg: svg });
+    }
+
+    // Step 2: if nothing visible changed, leave the strip alone.
+    // This keeps a running flame flicker or flash from restarting.
+    const ids = shown.map(item => item.id);
+    const lampShown = ids.includes("lamp") ? lampLook : "";
+    const signature = ids.join("|") + "#" + lampShown;
+    if (signature === lastStripSignature) return;
+    lastStripSignature = signature;
+
+    // Step 3: find items that are newly carried since the last update.
+    // No flash on the first update (lastShownItems is null),
+    // after a restart (quiet), or when the player prefers reduced motion.
+    const reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const canFlash = lastShownItems !== null && !quiet && !reduceMotion;
+    const newIds = canFlash ? ids.filter(id => !lastShownItems.includes(id)) : [];
+    lastShownItems = ids;
+
+    // Step 4: rebuild the strip. Only carried items get an element.
+    strip.style.setProperty("--icon-size", INVENTORY_ICON_PX + "px");
+    strip.style.setProperty("--flash-ms", INVENTORY_FLASH_MS + "ms");
+    strip.textContent = "";
+
+    const label = document.createElement("span");
+    label.className = "strip-label";
+    label.textContent = shown.length === 0 ? "CARRYING: NOTHING" : "CARRYING:";
+    strip.appendChild(label);
+
+    for (const item of shown) {
+      const icon = document.createElement("div");
+      icon.className = "carried-icon";
+      if (item.id === "lamp" && lampLook === "lit") icon.classList.add("lamp-lit");
+      icon.title = item.name;                          // only carried items get a title
+      icon.setAttribute("aria-label", item.name);
+      icon.setAttribute("role", "img");
+      icon.innerHTML = item.svg;
+      if (newIds.includes(item.id)) {
+        icon.classList.add("flash");                   // pickup flash, once
+        setTimeout(() => icon.classList.remove("flash"), INVENTORY_FLASH_MS);
+      }
+      strip.appendChild(icon);
+    }
+  } catch (error) {
+    // The strip must never break the game.
+  }
+}
+
 // updateStatusBar shows the room name and fear in the #status-bar element.
 // If the page has no #status-bar, it does nothing.
 function updateStatusBar(state) {
@@ -2249,6 +2507,8 @@ function handleSubmit(event) {
   const result = processCommand(gameState, text);
   gameState = result.state;
   updateStatusBar(gameState);
+  // Redraw the inventory strip. Quiet (no pickup flash) after a restart.
+  updateInventoryStrip(gameState, normalizeCommand(text) === "restart");
   // Show the reply, with a blank line after it before the next prompt.
   const replyLines = [...result.lines];
   if (result.lines.length > 0) {
@@ -2273,6 +2533,8 @@ function init() {
   soundEnabled = loadSoundChoice();
   updateSoundToggle();
   updateStatusBar(gameState);
+  // Draw the inventory strip at start. false: no quiet mode needed on first load.
+  updateInventoryStrip(gameState, false);
   // The intro is typed later by beginIntro, after the start screen.
   const form = document.getElementById("command-form");
   form.addEventListener("submit", handleSubmit);
@@ -2351,6 +2613,9 @@ function init() {
   // Start screen: keys and clicks are caught first (capture phase).
   document.addEventListener("keydown", handleStartInput, true);
   document.addEventListener("click", handleStartInput, true);
+
+  // Safety net: if anything ever scrolls the page itself, put it back at the top.
+  window.addEventListener("scroll", () => window.scrollTo(0, 0));
 
   // Show the loading screen last, once sound is loaded and listeners exist.
   // Only init() calls it, so it shows once per page load (not on restart).
