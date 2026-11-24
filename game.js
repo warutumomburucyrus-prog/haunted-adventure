@@ -111,7 +111,7 @@ const STORM_NOISE_BUFFER_S = 3;        // length of the shared noise buffer
 
 // Size of one icon in pixels, a whole number from 24 to 40.
 // Icons shrink on narrow screens, but never below 24.
-const INVENTORY_ICON_PX = 32;
+const INVENTORY_ICON_PX = 28;
 
 // How long the pickup flash lasts, in milliseconds (200 to 2000).
 const INVENTORY_FLASH_MS = 600;
@@ -187,11 +187,19 @@ function saveSoundChoice() {
   }
 }
 
-// Shows the current sound choice on the #sound-toggle button.
+// Shows the sound choice on the skull switch: mouth open means sound on,
+// mouth closed (cracked track) means sound off.
 function updateSoundToggle() {
   const button = document.getElementById("sound-toggle");
-  if (button) {
-    button.textContent = soundEnabled ? "SOUND: ON" : "SOUND: OFF";
+  if (!button) return;
+  button.classList.toggle("sound-on", soundEnabled);
+  button.classList.toggle("sound-off", !soundEnabled);
+  button.setAttribute("aria-checked", soundEnabled ? "true" : "false");
+  button.title = soundEnabled ? "Sound: on" : "Sound: off";
+  const knob = button.querySelector(".sw-knob");
+  if (knob) {
+    const svg = buildIconSvg({ rows: soundEnabled ? SKULL_OPEN : SKULL_CLOSED, palette: SKULL_PALETTE });
+    if (svg) knob.innerHTML = svg;
   }
 }
 
@@ -602,7 +610,7 @@ const FEAR_CELLAR_ENTRY = 10;
 const HINT_FEAR_COST = 5;
 
 // Fear levels that trigger a warning message, from lowest to highest.
-const FEAR_THRESHOLDS = [25, 50, 75];
+const FEAR_THRESHOLDS = [22, 40, 65];
 
 // The warning shown at each threshold. Same order as FEAR_THRESHOLDS.
 const THRESHOLD_LINES = [
@@ -683,14 +691,14 @@ const INITIAL_STATE = {
           unlockedFact: "kitchenDoorUnlocked",
           keyItem: "brass key",
           lockedLine: "The narrow door is locked. The keyhole is small.",
-          unlockLine: "The small brass key turns with a dry click, and the door swings inward."
+          unlockLine: "The small brass key turns with a dry click, and the narrow door swings inward."
         }
       },
       blocked: { south: "The front door is locked. It will not budge." },
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 30,
+          minFear: 20,
           replaces: "behind you the front door waits, silent and shut.",
           text: "behind you the front door stands open to the night."
         }
@@ -715,7 +723,7 @@ const INITIAL_STATE = {
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 30,
+          minFear: 20,
           replaces: "The only light comes from the way you came in.",
           text: "The way back is bricked up. Only bare wall remains."
         }
@@ -747,7 +755,7 @@ const INITIAL_STATE = {
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 40,
+          minFear: 30,
           replaces: "The way back to the hallway is behind you.",
           text: "The way back to the hallway is only a wall."
         }
@@ -778,12 +786,12 @@ const INITIAL_STATE = {
       // Lies shown when fear is high. "replaces" must match the room text exactly.
       lies: [
         {
-          minFear: 30,
+          minFear: 20,
           replaces: "the steps behind you lead back up.",
           text: "the steps behind you have collapsed."
         },
         {
-          minFear: 45,
+          minFear: 35,
           // This "replaces" text is a copy of ITEM_TEXT.key. ITEM_TEXT is defined
           // after INITIAL_STATE, so it is copied here. Edit both together.
           replaces: "In the hollow, an old iron key lies in the dust, dull and cold, as if it has waited a long time.",
@@ -829,7 +837,7 @@ const ITEM_DETAILS = {
   "brass key": "A small brass key, oddly clean. It feels warm for a moment, then cold.",
   "rusty key": "A small key, orange with rust. It looks as if it fits something close by.",
   lighter: "A battered lighter, cold to the touch. The flint wheel still spins.",
-  "oil can": "A tin can with a long spout. Something still sloshes inside."
+  "oil can": "A tin can with a long spout. Something oily sloshes inside."
 };
 
 // LAMP_TEXT is the lamp's examine text. It depends only on the lamp facts.
@@ -867,7 +875,7 @@ const HINT_TEXT = [
     "Look closely at what stands in the middle of the Library.",
     "The reading desk holds a torn page. Study the desk, then the page."
   ],
-  // Step 4: open the odd book and take the brass key
+  // Step 4: pull the odd book and take the brass key
   [
     "Not everything on these shelves has rotted the same way.",
     "One book is drier and heavier than the rest. Something is wedged behind it.",
@@ -1228,8 +1236,7 @@ function setLoadingPromptVisible(visible) {
 function showLoadingPrompt() {
   // Too late if the sequence already moved on.
   if (startPhase !== "loading") return;
-  document.getElementById("loading-prompt").classList.remove("loading-hidden");
-  document.getElementById("loading-hint").classList.remove("loading-hidden");
+  setLoadingPromptVisible(true);
 }
 
 // startLoading starts the loading screen: word size, dots and prompt timer.
@@ -1266,8 +1273,7 @@ function startAuto() {
   // Hide the prompt and hint. Sound settings are left untouched.
   clearTimeout(promptTimer);
   promptTimer = null;
-  document.getElementById("loading-prompt").classList.add("loading-hidden");
-  document.getElementById("loading-hint").classList.add("loading-hidden");
+  setLoadingPromptVisible(false);
 
   // Short silent wait, then the intro.
   handoffTimer = setTimeout(function () { beginIntro(false); }, LOADING_SILENT_MS);
@@ -2230,6 +2236,23 @@ let lastStripSignature = null;
 // Each icon is 12 rows of 12 characters. "." is an empty cell.
 // Every other character is a color in the icon's palette.
 
+// The backpack icon. It stands in for the word "Inventory".
+const BACKPACK_PALETTE = { s: "#9a7b4f", b: "#a8743a", f: "#c48a4a", k: "#ffcc33", p: "#8d5f2e" };
+const BACKPACK_ROWS = [
+  "....ssss....",
+  "...s....s...",
+  "..bbbbbbbb..",
+  ".bbbbbbbbbb.",
+  ".bffffffffb.",
+  ".bffffkkffb.",
+  ".bbbbbbbbbb.",
+  ".bppppppppb.",
+  ".bppppppppb.",
+  ".bppppppppb.",
+  ".bbbbbbbbbb.",
+  "..bbbbbbbb.."
+];
+
 // Brass key and rusty key share one shape. Only the palette differs.
 const KEY_ROWS = [
   "............",
@@ -2301,6 +2324,42 @@ const ICONS = {
     palette: { h: "#8a8a8a", c: "#5d7f9a", p: "#b0b0b0" }
   }
 };
+
+// ---- Skull sound switch pictures ----
+const SKULL_PALETTE = { w: "#e9e4cf", s: "#9a957f", d: "#0a0a0a" };
+
+// Sound off: mouth closed and stitched.
+const SKULL_CLOSED = [
+  "............",
+  "...wwwwww...",
+  "..wwwwwwww..",
+  ".wwwwwwwwww.",
+  ".wddwwwwddw.",
+  ".wddwwwwddw.",
+  ".wwwwddwwww.",
+  "..wwwwwwww..",
+  "..wsdsdsds..",
+  "..wwwwwwww..",
+  "...wwwwww...",
+  "............"
+];
+
+// Sound on: jaw dropped, mouth open.
+const SKULL_OPEN = [
+  "............",
+  "...wwwwww...",
+  "..wwwwwwww..",
+  ".wwwwwwwwww.",
+  ".wddwwwwddw.",
+  ".wddwwwwddw.",
+  ".wwwwddwwww.",
+  "..wswswsws..",
+  "...dddddd...",
+  "...dddddd...",
+  "..wswswsws..",
+  "...wwwwww..."
+];
+
 
 // The lamp has three looks. They share one palette.
 const LAMP_PALETTE = { h: "#c9a227", g: "#7fe3b0", f: "#d9b648", l: "#ffcc33" };
@@ -2404,13 +2463,15 @@ function updateInventoryStrip(state, quiet) {
       shown.push({ id: id, name: STRIP_ITEM_NAMES[id], svg: svg });
     }
 
-    // Step 2: if nothing visible changed, leave the strip alone.
-    // This keeps a running flame flicker or flash from restarting.
-    const ids = shown.map(item => item.id);
-    const lampShown = ids.includes("lamp") ? lampLook : "";
-    const signature = ids.join("|") + "#" + lampShown;
-    if (signature === lastStripSignature) return;
-    lastStripSignature = signature;
+    // The backpack always comes first. It is dim when nothing is carried.
+    const pack = document.createElement("div");
+    pack.className = "carried-icon strip-pack" + (shown.length === 0 ? " pack-empty" : "");
+    const packSvg = buildIconSvg({ rows: BACKPACK_ROWS, palette: BACKPACK_PALETTE });
+    if (packSvg) pack.innerHTML = packSvg;
+    pack.title = shown.length === 0 ? "Backpack: empty" : "Backpack";
+    pack.setAttribute("aria-label", pack.title);
+    pack.setAttribute("role", "img");
+    strip.appendChild(pack);
 
     // Step 3: find items that are newly carried since the last update.
     // No flash on the first update (lastShownItems is null),
@@ -2428,7 +2489,7 @@ function updateInventoryStrip(state, quiet) {
 
     const label = document.createElement("span");
     label.className = "strip-label";
-    label.textContent = shown.length === 0 ? "CARRYING: NOTHING" : "CARRYING:";
+    label.textContent = shown.length === 0 ? "Inventory: Empty" : "Inventory:";
     strip.appendChild(label);
 
     for (const item of shown) {

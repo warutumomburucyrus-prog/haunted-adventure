@@ -15,12 +15,23 @@
     <!-- Status bar: the game title for now, the room name later -->
     <div id="status-bar">
       <span>HAUNTED ADVENTURE</span>
+      <!-- Inventory strip: game code draws the carried items here -->
+      <span id="inventory-strip" role="group" aria-label="Inventory" ></span>
       <span id="status-info"></span>
-      <button type="button" id="sound-toggle">SOUND: ON</button>
+
+      <button type="button" id="sound-toggle" role="switch" aria-checked="true" aria-label="Sound" title="Sound: on">
+        <span class="sw-label">SOUND</span>
+        <span class="sw-track">
+          <svg class="sw-crack" viewBox="0 0 64 36" aria-hidden="true">
+            <path d="M30 0 L36 11 L27 17 L38 25 L31 36" />
+          </svg>
+          <span class="sw-knob"></span>
+        </span>
+        </button>
+        
     </div>
 
-    <!-- Inventory strip: game code draws the carried items here -->
-    <div id="inventory-strip" role="group" aria-label="Inventory"></div>
+    
 
   </div>
 

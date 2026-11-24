@@ -185,9 +185,8 @@ body.starting #output {
   outline-offset: 2px;
 }
 
-/* Keep the room and fear text next to the sound button, at the right end. */
 #status-info {
-  margin-left: auto;
+  margin-left: 0;
   margin-right: 16px;
 }
 
@@ -249,20 +248,22 @@ body {
 }
 
 /* Inventory strip: one row with a label and the carried icons. */
+/* Inventory strip: a small dark pocket in the green header, holding the backpack and the carried items. */
 #inventory-strip {
   display: flex;
   align-items: center;
   gap: 6px;
   box-sizing: border-box;
-  /* Fixed height: icon size + 12px padding + 1px border. Same for 0 to 6 icons. */
-  height: calc(var(--icon-size, 32px) + 13px);
-  padding: 6px 8px;
+  height: 38px;
+  /* always the same height, 0 to 6 items */
+  padding: 3px 8px;
+  margin-left: auto;
+  /* pushes the pocket right, before the room and fear text */
+  margin-right: 12px;
   background-color: #0a0a0a;
-  color: #33ff66;
-  font-family: monospace;
-  font-size: 13px;
-  border-bottom: 1px solid #1f9940;
-  overflow: hidden;             /* never cause sideways scrolling */
+  /* dark, so the icons read well on the green bar */
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 /* Hide the strip while the loading screen shows (body has "starting"). */
@@ -270,14 +271,10 @@ body.starting #inventory-strip {
   display: none;
 }
 
-/* The "CARRYING:" label and the "CARRYING: NOTHING" line: dim, same font. */
-.strip-label {
-  flex: 0 0 auto;
-  white-space: nowrap;
-  color: #1f9940;
-  margin-right: 2px;
+/* The backpack is dim when empty and bright when it holds something. */
+.strip-pack.pack-empty {
+  opacity: 0.5;
 }
-
 /* One carried icon. It may shrink, but never below 24px. */
 .carried-icon {
   flex: 0 1 var(--icon-size, 32px);
@@ -332,4 +329,100 @@ body.starting #inventory-strip {
   left: 0;
   top: 0;
   pointer-events: none;
+}
+
+/* Skull sound switch */
+#sound-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  color: #0a0a0a;
+  font-family: monospace;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sw-track {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 66px;
+  height: 34px;
+  border: 2px solid #0a0a0a;
+  border-radius: 17px;
+  background: #0a0a0a;
+  transition: box-shadow 0.2s;
+}
+
+.sw-knob {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  transition: left 0.2s, transform 0.2s;
+}
+
+.sw-knob svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sw-crack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+}
+
+.sw-crack path {
+  fill: none;
+  stroke: #6b6b6b;
+  stroke-width: 2;
+}
+
+/* ON: green glow, skull on the right with its mouth open. */
+#sound-toggle.sound-on .sw-track {
+  box-shadow: inset 0 0 9px #33ff66;
+}
+
+#sound-toggle.sound-on .sw-knob {
+  left: 32px;
+}
+
+/* OFF: dull cracked track, skull tilted on the left with its mouth stitched shut. */
+#sound-toggle.sound-off .sw-track {
+  background: #1d1d1d;
+}
+
+#sound-toggle.sound-off .sw-crack {
+  display: block;
+}
+
+#sound-toggle.sound-off .sw-knob {
+  transform: rotate(-14deg) translateY(2px);
+  filter: grayscale(0.6) brightness(0.8);
+}
+
+@media (max-width: 600px) {
+  .sw-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .sw-track,
+  .sw-knob {
+    transition: none;
+  }
 }
