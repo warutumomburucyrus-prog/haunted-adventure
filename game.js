@@ -14,7 +14,7 @@ const TYPE_DELAY_MS = 60;
 const PUNCTUATION_PAUSE_MS = 300;
 
 // Pause between the end of one line and the start of the next, in milliseconds.
-const LINE_PAUSE_MS = 150;
+const LINE_PAUSE_MS = 200;
 
 // ---- Typewriter variables ----
 // These hold presentation facts only (what is being typed). Never game facts.
@@ -2443,73 +2443,145 @@ function getLampLook(state) {
 // The strip always shows the true state, even when the narrator lies.
 // It only reads the state. It never changes it.
 // quiet is true after a restart: no pickup flash then.
+
 function updateInventoryStrip(state, quiet) {
   try {
     const strip = document.getElementById("inventory-strip");
     if (!strip) return;
 
-    // Step 1: list the items to draw, in carriedItems order.
-    // Skip repeated ids, ids with no icon, and icons that are not valid.
+    // Identify the inventory's current visual state.
+    const signature = JSON.stringify([
+      state.carriedItems,
+      state.fueled,
+      state.lit
+    ]);
+
+    // Nothing changed: leave the existing SVGs alone.
+    if (!quiet && signature === lastStripSignature) return;
+
+    // Determine the lamp's appearance.
     const lampLook = getLampLook(state);
-    const shown = [];                                  // { id, name, svg }
+
+    // Build a list of valid inventory items.
+    const shown = [];
+
     for (const id of state.carriedItems) {
-      if (shown.some(item => item.id === id)) continue;   // same id twice: draw once
-      if (!STRIP_ITEM_NAMES[id]) continue;                // no icon for this id
+      if (shown.some(item => item.id === id)) continue;
+      if (!STRIP_ITEM_NAMES[id]) continue;
+
       const icon = id === "lamp"
         ? { rows: LAMP_LOOKS[lampLook], palette: LAMP_PALETTE }
         : ICONS[id];
+
       const svg = buildIconSvg(icon);
-      if (!svg) continue;                                 // invalid icon: skip it
-      shown.push({ id: id, name: STRIP_ITEM_NAMES[id], svg: svg });
+      if (!svg) continue;
+
+      shown.push({
+        id: id,
+        name: STRIP_ITEM_NAMES[id],
+        svg: svg
+      });
     }
 
-    // The backpack always comes first. It is dim when nothing is carried.
-    const pack = document.createElement("div");
-    pack.className = "carried-icon strip-pack" + (shown.length === 0 ? " pack-empty" : "");
-    const packSvg = buildIconSvg({ rows: BACKPACK_ROWS, palette: BACKPACK_PALETTE });
-    if (packSvg) pack.innerHTML = packSvg;
-    pack.title = shown.length === 0 ? "Backpack: empty" : "Backpack";
-    pack.setAttribute("aria-label", pack.title);
-    pack.setAttribute("role", "img");
-    strip.appendChild(pack);
+    // Define ids before using them.
+    const ids = shown.map(item => item.id);
 
-    // Step 3: find items that are newly carried since the last update.
-    // No flash on the first update (lastShownItems is null),
-    // after a restart (quiet), or when the player prefers reduced motion.
+    // Determine which items are newly acquired.
     const reduceMotion = window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const canFlash = lastShownItems !== null && !quiet && !reduceMotion;
-    const newIds = canFlash ? ids.filter(id => !lastShownItems.includes(id)) : [];
+
+    const canFlash = lastShownItems !== null &&
+      !quiet && !reduceMotion;
+
+    const newIds = canFlash
+      ? ids.filter(id => !lastShownItems.includes(id))
+      : [];
+
+    // Remember the current inventory.
     lastShownItems = ids;
 
-    // Step 4: rebuild the strip. Only carried items get an element.
-    strip.style.setProperty("--icon-size", INVENTORY_ICON_PX + "px");
-    strip.style.setProperty("--flash-ms", INVENTORY_FLASH_MS + "ms");
+    // Configure the inventory strip.
+    strip.style.setProperty(
+      "--icon-size",
+      INVENTORY_ICON_PX + "px"
+    );
+
+    strip.style.setProperty(
+      "--flash-ms",
+      INVENTORY_FLASH_MS + "ms"
+    );
+
+    // Clear the old contents before creating new elements.
     strip.textContent = "";
 
+    // Create the backpack.
+    const pack = document.createElement("div");
+
+    pack.className = "carried-icon strip-pack" +
+      (shown.length === 0 ? " pack-empty" : "");
+
+    const packSvg = buildIconSvg({
+      rows: BACKPACK_ROWS,
+      palette: BACKPACK_PALETTE
+    });
+
+    if (packSvg) pack.innerHTML = packSvg;
+
+    pack.title = shown.length === 0
+      ? "Backpack: empty"
+      : "Backpack";
+
+    pack.setAttribute("aria-label", pack.title);
+    pack.setAttribute("role", "img");
+
+    strip.appendChild(pack);
+
+    // Create the inventory label.
     const label = document.createElement("span");
+
     label.className = "strip-label";
-    label.textContent = shown.length === 0 ? "Inventory: Empty" : "Inventory:";
+    label.textContent = shown.length === 0
+      ? "Inventory: Empty"
+      : "Inventory:";
+
     strip.appendChild(label);
 
+    // Create icons for carried items.
     for (const item of shown) {
       const icon = document.createElement("div");
+
       icon.className = "carried-icon";
-      if (item.id === "lamp" && lampLook === "lit") icon.classList.add("lamp-lit");
-      icon.title = item.name;                          // only carried items get a title
+
+      if (item.id === "lamp" && lampLook === "lit") {
+        icon.classList.add("lamp-lit");
+      }
+
+      icon.title = item.name;
       icon.setAttribute("aria-label", item.name);
       icon.setAttribute("role", "img");
       icon.innerHTML = item.svg;
+
+      // Flash only newly acquired items.
       if (newIds.includes(item.id)) {
-        icon.classList.add("flash");                   // pickup flash, once
-        setTimeout(() => icon.classList.remove("flash"), INVENTORY_FLASH_MS);
+        icon.classList.add("flash");
+
+        setTimeout(
+          () => icon.classList.remove("flash"),
+          INVENTORY_FLASH_MS
+        );
       }
+
       strip.appendChild(icon);
     }
+
+    // Remember the successfully rendered inventory.
+    lastStripSignature = signature;
+
   } catch (error) {
-    // The strip must never break the game.
+    console.error("Inventory rendering failed:", error);
   }
 }
+
 
 // updateStatusBar shows the room name and fear in the #status-bar element.
 // If the page has no #status-bar, it does nothing.
