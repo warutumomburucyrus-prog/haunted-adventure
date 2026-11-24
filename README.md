@@ -4,7 +4,7 @@
 
 **Kiroween 2026 · Category: Resurrection · Built with Kiro**
 
-▶ **Play it:** https://haunted-adventure.vercel.app
+**Play it:** https://haunted-adventure.vercel.app
 Works in any modern browser, and on phones. Turn the sound on for the full effect.
 
 ## The idea
